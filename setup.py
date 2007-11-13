@@ -13,8 +13,20 @@ setup(
     author = "Christian Zagrodnick",
     author_email = "cz@gocept.com",
     description = "Copying files save to another machine",
-    long_description = file(os.path.join(os.path.dirname(__file__),
-                                         'README.txt')).read(),
+    long_description = (
+        file(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
+        + '\n\n' +
+        file(os.path.join(os.path.dirname(__file__),
+                          'src', 'gocept', 'sftpcopy', 'README.txt')).read()),
+    classifiers = [
+        'Development Status :: 2 - Pre-Alpha',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Zope Public License',
+        'Programming Language :: Python',
+        'Operating System :: Unix',
+    ],
+
     license = "ZPL 2.1",
     url='http://pypi.python.org/pypi/gocept.sftpcopy',
 
