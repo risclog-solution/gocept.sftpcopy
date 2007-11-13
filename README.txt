@@ -13,7 +13,10 @@ All together this allows quite stable and asynchronous data transfer.
 Changes
 =======
 
-0.1.1 (unreleased)
+0.2 (unreleased)
+++++++++++++++++
+
+0.1.1 (2007-11-13)
 ++++++++++++++++++
 
 * Fixed brown back release 0.1 which was not usable at all since there were
