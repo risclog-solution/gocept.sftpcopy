@@ -10,6 +10,14 @@ another application to pick it up.
 
 All together this allows quite stable and asynchronous data transfer.
 
+Changes
+=======
+
+0.1.1 (unreleased)
+++++++++++++++++++
+
+* Fixed brown back release 0.1 which was not usable at all since there were
+  various files missing in the archive.
 
 TODO
 ====
