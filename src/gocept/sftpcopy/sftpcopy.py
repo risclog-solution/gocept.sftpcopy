@@ -26,6 +26,7 @@ class SFTPCopy(object):
         self.username = username
         self.password = password
         self.remote_path = remote_path
+        self.filestore = filestore
 
     def connect(self):
         hostkey = self.getHostKey(self.hostname)
@@ -38,7 +39,7 @@ class SFTPCopy(object):
         self.sftp.chdir(self.remote_path)
 
         logging.info('Connected to sftp://%s:<hidden>@%s:%s/%s' % (
-            self.username, self.hostname, self.port, self.path))
+            self.username, self.hostname, self.port, self.remote_path))
 
     def close(self):
         logging.info('Disconnecting.')
