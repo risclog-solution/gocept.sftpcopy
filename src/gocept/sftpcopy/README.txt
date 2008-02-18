@@ -12,23 +12,28 @@ Configure an sftpcopy:
 >>> filestore.prepare()
 >>> sftp = gocept.sftpcopy.SFTPCopy(
 ...     'download', filestore,
-...     'localhost', 22, 'testuser', 'dummy-password', 'in')
+...     'localhost', 22, 'test', 'D>Mx,62I', 'tmp')
 
-Connecting will not work because the user does not exist:
+
+After connecting ...
 
 >>> sftp.connect()
-Traceback (most recent call last):
-    ...
-AuthenticationException: Authentication failed.
 
+... we can download ...
 
-For more tests we'll need to setup an sftp-server in the test case (via
-paramiko probably).
+>>> sftp.copyNewFiles()
+
+... and upload files ...
+
+>>> sftp.uploadNewFiles()
+
+Those methods doe not put anything out if there is no error.
 
 
 Cleanup
 =======
 
+>>> sftp.close()
 >>> import shutil
 >>> shutil.rmtree(store_dir)
 

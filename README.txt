@@ -13,8 +13,13 @@ All together this allows quite stable and asynchronous data transfer.
 Changes
 =======
 
-0.2 (unreleased)
-++++++++++++++++
+0.1.2 (2008-02-18)
+++++++++++++++++++
+
+* Fixed bug in connection logging.
+* Remember filestore so we can actually upload/download.
+* Did some testing predefined user.
+
 
 0.1.1 (2007-11-13)
 ++++++++++++++++++
