@@ -135,35 +135,51 @@ def configure_logging(filename=None, filemode=None, stream=None,
             logging.root.setLevel(level)
 
 
-def main(configfile=None):
+def main(configfile=None, configdict=None):
     """Console script to copy things defined by config file."""
-    config = ConfigParser.SafeConfigParser()
-    if configfile is None:
-        # TODO: use getopt
-        configfile = sys.argv[1]
-    config.read(configfile)
+    if not configfile and not configdict:
+        raise ValueError("need configfile or configdict")
+    if configfile and configdict:
+        raise ValueError("Need either configfile or configdict")
 
-    try:
-        logfile_name = config.get('general', 'logfile')
-    except ConfigParser.NoOptionError:
-        logfile = sys.stdout
+    logfile_name = None
+
+    if configdict is None:
+        conficdict = {}
     else:
-        logfile = file(logfile_name, 'a')
+        logfile_name = configdict.get('logfile_name')
+    if configfile is not None:
+        config = ConfigParser.SafeConfigParser()
+        config.read(configfile)
 
+        try:
+            logfile_name = config.get('general', 'logfile')
+        except ConfigParser.NoOptionError:
+            pass
+        conficdict['logfile'] = logfile
+
+        configdict['mode'] = config.get('general', 'mode')
+        configdict['local_path'] = config.get('local', 'path')
+
+        configdict['hostname'] = config.get('remote', 'hostname')
+        configdict['port'] = config.getint('remote', 'port')
+        configdict['username'] = config.get('remote', 'username')
+        configdict['password'] = config.get('remote', 'password')
+        configdict['remote_path'] = config.get('remote', 'path')
+
+    if logfile_name:
+        logfile = file(logfile_name, 'a')
+    else:
+        logfile = sys.stdout
     configure_logging(stream=logfile, level=logging.INFO)
 
-    mode = config.get('general', 'mode')
-    filestore = gocept.filestore.FileStore(config.get('local', 'path'))
+    filestore = gocept.filestore.FileStore(configdict['local_path'])
     filestore.prepare()
 
-    hostname = config.get('remote', 'hostname')
-    port = config.getint('remote', 'port')
-    username = config.get('remote', 'username')
-    password = config.get('remote', 'password')
-    path = config.get('remote', 'path')
-
-    cpy = SFTPCopy(mode, filestore,
-                   hostname, port, username, password, path)
+    cpy = SFTPCopy(configdict['mode'], filestore,
+                   configdict['hostname'], configdict.get('port', 22),
+                   configdict['username'], configdict['password'],
+                   configdict['remote_path'])
     cpy.connect()
     cpy.copyNewFiles()
     cpy.close()
