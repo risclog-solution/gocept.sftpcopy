@@ -13,8 +13,10 @@ All together this allows quite stable and asynchronous data transfer.
 Changes
 =======
 
-0.1.3 (unreleased)
+0.1.3 (2008-02-27)
 ++++++++++++++++++
+
+* Added `configdict` argument to main function for easier buildout integration.
 
 0.1.2 (2008-02-18)
 ++++++++++++++++++
