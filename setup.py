@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'gocept.sftpcopy',
-    version = '0.1.4dev',
+    version = '0.1.4',
     author = "Christian Zagrodnick",
     author_email = "cz@gocept.com",
     description = "Copying files save to another machine",
