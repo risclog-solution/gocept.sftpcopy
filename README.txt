@@ -16,6 +16,8 @@ Changes
 0.1.4 (unreleased)
 ++++++++++++++++++
 
+* Log errors that occur while connecting
+
 0.1.3 (2008-02-27)
 ++++++++++++++++++
 

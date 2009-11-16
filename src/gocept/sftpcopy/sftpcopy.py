@@ -31,15 +31,20 @@ class SFTPCopy(object):
     def connect(self):
         hostkey = self.getHostKey(self.hostname)
 
-        self._transport = paramiko.Transport((self.hostname, self.port))
-        self._transport.connect(username=self.username,
-                                password=self.password,
-                                hostkey=hostkey)
-        self.sftp = paramiko.SFTPClient.from_transport(self._transport)
-        self.sftp.chdir(self.remote_path)
-
-        logging.info('Connected to sftp://%s:<hidden>@%s:%s/%s' % (
-            self.username, self.hostname, self.port, self.remote_path))
+        url = 'sftp://%s:<hidden>@%s:%s/%s' % (
+            self.username, self.hostname, self.port, self.remote_path)
+        try:
+            self._transport = paramiko.Transport((self.hostname, self.port))
+            self._transport.connect(username=self.username,
+                                    password=self.password,
+                                    hostkey=hostkey)
+            self.sftp = paramiko.SFTPClient.from_transport(self._transport)
+            self.sftp.chdir(self.remote_path)
+        except:
+            logging.error('Error connecting to %s' % url, exc_info=True)
+            raise
+        else:
+            logging.info('Connected to %s' % url)
 
     def close(self):
         logging.info('Disconnecting.')
