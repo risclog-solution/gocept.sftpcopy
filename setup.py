@@ -9,15 +9,18 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'gocept.sftpcopy',
-    version = "0.1.4dev",
+    version = '0.1.4dev',
     author = "Christian Zagrodnick",
     author_email = "cz@gocept.com",
     description = "Copying files save to another machine",
     long_description = (
         file(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
-        + '\n\n' +
-        file(os.path.join(os.path.dirname(__file__),
-                          'src', 'gocept', 'sftpcopy', 'README.txt')).read()),
+        + '\n\n'
+        + file(os.path.join(os.path.dirname(__file__),
+                          'src', 'gocept', 'sftpcopy', 'README.txt')).read()
+        + file(os.path.join(os.path.dirname(__file__), 'CHANGES.txt')).read()
+        + '\n\n'
+        ),
     classifiers = [
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
