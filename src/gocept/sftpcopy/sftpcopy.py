@@ -1,16 +1,13 @@
 # Copyright (c) 2006-2007 gocept gmbh & co. kg
 # See also LICENSE.txt
-# $Id$
 
+import ConfigParser
+import gocept.filestore
+import logging
 import os
 import os.path
-import sys
-import logging
-import ConfigParser
-
 import paramiko
-
-import gocept.filestore
+import sys
 
 
 class SFTPCopy(object):
@@ -107,9 +104,7 @@ class SFTPCopy(object):
                 logging.error('Failed to download %r (IOError: %s)' % (
                     name, e))
 
-
     def getHostKey(self, hostname):
-        hostkey = None
         try:
             host_keys = paramiko.util.load_host_keys(
                 os.path.expanduser('~/.ssh/known_hosts'))
@@ -150,7 +145,7 @@ def main(configfile=None, configdict=None):
     logfile_name = None
 
     if configdict is None:
-        conficdict = {}
+        configdict = {}
     else:
         logfile_name = configdict.get('logfile_name')
     if configfile is not None:
@@ -161,7 +156,7 @@ def main(configfile=None, configdict=None):
             logfile_name = config.get('general', 'logfile')
         except ConfigParser.NoOptionError:
             pass
-        conficdict['logfile'] = logfile
+        configdict['logfile'] = logfile_name
 
         configdict['mode'] = config.get('general', 'mode')
         configdict['local_path'] = config.get('local', 'path')
