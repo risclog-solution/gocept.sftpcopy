@@ -6,12 +6,12 @@ import os.path
 
 
 setup(
-    name = 'gocept.sftpcopy',
-    version = '0.1.5dev',
-    author = "Christian Zagrodnick",
-    author_email = "cz@gocept.com",
-    description = "Copying files save to another machine",
-    long_description = (
+    name='gocept.sftpcopy',
+    version='0.1.5dev',
+    author="Christian Zagrodnick",
+    author_email="cz@gocept.com",
+    description="Copying files save to another machine",
+    long_description=(
         file(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
         + '\n\n'
         + file(os.path.join(os.path.dirname(__file__),
@@ -19,7 +19,7 @@ setup(
         + file(os.path.join(os.path.dirname(__file__), 'CHANGES.txt')).read()
         + '\n\n'
         ),
-    classifiers = [
+    classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
         'Intended Audience :: Developers',
@@ -28,24 +28,23 @@ setup(
         'Operating System :: Unix',
     ],
 
-    license = "ZPL 2.1",
+    license="ZPL 2.1",
     url='http://pypi.python.org/pypi/gocept.sftpcopy',
 
-    packages = find_packages('src'),
-    package_dir = {'': 'src'},
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
 
-    include_package_data = True,
-    zip_safe = False,
+    include_package_data=True,
+    zip_safe=False,
 
-    namespace_packages = ['gocept'],
-    install_requires = [
+    namespace_packages=['gocept'],
+    install_requires=[
         'setuptools',
         'gocept.filestore',
         'paramiko',
     ],
-    extras_require = dict(
+    extras_require=dict(
         test=[]),
-    entry_points = dict(
-        console_scripts =
-            ['sftpcopy = gocept.sftpcopy.sftpcopy:main']),
+    entry_points=dict(console_scripts=[
+            'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
 )
