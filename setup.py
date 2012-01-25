@@ -1,10 +1,8 @@
 # Copyright (c) 2007 gocept gmbh & co. kg
 # See also LICENSE.txt
-# $Id$
-
-import os.path
 
 from setuptools import setup, find_packages
+import os.path
 
 
 setup(
