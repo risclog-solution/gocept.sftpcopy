@@ -43,11 +43,15 @@ class SFTPThread(threading.Thread):
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+        server_socket.settimeout(0.1)
         server_socket.bind((self.host, self.port))
         server_socket.listen(10)
 
         while self.running:
-            conn, addr = server_socket.accept()
+            try:
+                conn, addr = server_socket.accept()
+            except socket.timeout:
+                continue
 
             transport = paramiko.Transport(conn)
             transport.add_server_key(DEFAULT_HOST_KEY)
