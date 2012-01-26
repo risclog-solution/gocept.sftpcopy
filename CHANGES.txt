@@ -1,6 +1,5 @@
-=======
-CHANGES
-=======
+Changelog
+=========
 
 0.1.5 (unreleased)
 ==================
@@ -11,24 +10,27 @@ CHANGES
 0.1.4 (2009-11-16)
 ==================
 
-* Log errors that occur while connecting
+- Log errors that occur while connecting
+
 
 0.1.3 (2008-02-27)
 ==================
 
-* Added `configdict` argument to main function for easier buildout integration.
+- Added ``configdict`` argument to main function for easier buildout
+  integration.
+
 
 0.1.2 (2008-02-18)
 ==================
 
-* Fixed bug in connection logging.
-* Remember filestore so we can actually upload/download.
-* Did some testing predefined user.
+- Fixed bug in connection logging.
+- Remember filestore so we can actually upload/download.
+- Did some testing predefined user.
 
 
 0.1.1 (2007-11-13)
 ==================
 
-* Fixed brown back release 0.1 which was not usable at all since there were
+- Fixed brown back release 0.1 which was not usable at all since there were
   various files missing in the archive.
 

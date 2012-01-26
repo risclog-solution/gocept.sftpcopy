@@ -8,11 +8,18 @@ them to the remote server and put them into `cur` on success. Likewise it will
 download files from the remote server and put them into the `new` directory for
 another application to pick it up.
 
-All together this allows quite stable and asynchronous data transfer.
+Usage
+=====
 
-TODO
-====
+::
 
-* Documentation
-* Tests!
-* Interfaces would be nice :)
+    import gocept.filestore
+    import gocept.sftpcopy
+    filestore = gocept.filestore.FileStore(store_dir)
+    filestore.prepare()
+    sftp = gocept.sftpcopy.SFTPCopy(
+        'download', '/path/on/local/machine',
+        'remote.host', 22, 'user', 'password', '/path/on/remote/machine')
+    sftp.connect()
+    sftp.uploadNewFiles()
+    sftp.downloadNewFiles()
