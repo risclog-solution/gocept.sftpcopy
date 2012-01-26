@@ -128,6 +128,8 @@ def configure_logging(filename=None, filemode=None, stream=None,
 def main(configdict=sys.argv):
     config = configdict # keep parameter name backwards compatible
     if not isinstance(config, dict):
+        # XXX tests for config file mode are missing, so it might not work at
+        # all
         parser = ConfigParser.SafeConfigParser()
         parser.read(config[1])
         config = {}
