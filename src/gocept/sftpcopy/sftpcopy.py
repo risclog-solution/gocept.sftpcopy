@@ -125,55 +125,42 @@ def configure_logging(filename=None, filemode=None, stream=None,
             logging.root.setLevel(level)
 
 
-def main(configfile=None, configdict=None):
-    """Console script to copy things defined by config file."""
-    if not configfile and not configdict:
-        raise ValueError("need configfile or configdict")
-    if configfile and configdict:
-        raise ValueError("Need either configfile or configdict")
-
-    logfile_name = None
-
-    if configdict is None:
-        configdict = {}
-    else:
-        logfile_name = configdict.get('logfile_name')
-    if configfile is not None:
-        config = ConfigParser.SafeConfigParser()
-        config.read(configfile)
+def main(configdict=sys.argv):
+    config = configdict # keep parameter name backwards compatible
+    if not isinstance(config, dict):
+        parser = ConfigParser.SafeConfigParser()
+        parser.read(config[1])
+        config = {}
 
         try:
-            logfile_name = config.get('general', 'logfile')
+            config['logfile'] = parser.get('general', 'logfile')
         except ConfigParser.NoOptionError:
             pass
-        configdict['logfile'] = logfile_name
 
-        configdict['mode'] = config.get('general', 'mode')
-        configdict['local_path'] = config.get('local', 'path')
+        config['mode'] = parser.get('general', 'mode')
+        config['local_path'] = parser.get('local', 'path')
 
-        configdict['hostname'] = config.get('remote', 'hostname')
-        configdict['port'] = config.getint('remote', 'port')
-        configdict['username'] = config.get('remote', 'username')
-        configdict['password'] = config.get('remote', 'password')
-        configdict['remote_path'] = config.get('remote', 'path')
+        config['hostname'] = parser.get('remote', 'hostname')
+        config['port'] = parser.getint('remote', 'port')
+        config['username'] = parser.get('remote', 'username')
+        config['password'] = parser.get('remote', 'password')
+        config['remote_path'] = parser.get('remote', 'path')
 
-    if logfile_name:
-        logfile = file(logfile_name, 'a')
+    if config.get('logfile'):
+        logfile = open(config.get('logfile'), 'a')
     else:
         logfile = sys.stdout
     configure_logging(stream=logfile, level=logging.INFO)
 
-    cpy = SFTPCopy(configdict['mode'], configdict['local_path'],
-                   configdict['hostname'], configdict.get('port', 22),
-                   configdict['username'], configdict['password'],
-                   configdict['remote_path'])
+    cpy = SFTPCopy(config['local_path'],
+                   config['hostname'], config.get('port', 22),
+                   config['username'], config['password'],
+                   config['remote_path'])
     cpy.connect()
-    if configdict['mode'] == 'upload':
+    if config['mode'] == 'upload':
         cpy.uploadNewFiles()
-    elif configdict['mode'] == 'download':
+    elif config['mode'] == 'download':
         cpy.downloadNewFiles()
     else:
         raise ValueError("Invalid parameter for general/mode")
-
-    cpy.copyNewFiles()
     cpy.close()
