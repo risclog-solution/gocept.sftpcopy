@@ -1,0 +1,13 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:meta="http://namespaces.zope.org/meta">
+
+  <meta:directives namespace="http://namespaces.gocept.com/amqp">
+
+    <meta:directive
+      name="sftpupload"
+      schema=".amqp.ISFTPDirective"
+      handler=".amqp.sftp_directive"
+      />
+
+  </meta:directives>
+</configure>
