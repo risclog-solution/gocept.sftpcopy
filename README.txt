@@ -53,9 +53,9 @@ AMQP integration
 ================
 
 If you require the `amqp` extra, gocept.sftpcopy offers a `gocept.amqprun`_
-queue handler that uploads the message body as a file via SFTP (it generates a
-filename based on routing key and a timestamp). Here's an example ZCML
-snippet::
+queue handler that uploads the message body as a file via SFTP (it respects the
+``X-Filename`` header or generates a filename based on routing key and a
+timestamp). Here's an example ZCML snippet::
 
     <configure xmlns="http://namespaces.zope.org/zope"
                xmlns:amqp="http://namespaces.gocept.com/amqp">

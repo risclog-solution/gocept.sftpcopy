@@ -3,7 +3,6 @@
 
 import gocept.amqprun.handler
 import gocept.amqprun.interfaces
-import time
 import zope.component.zcml
 import zope.interface
 
@@ -17,12 +16,15 @@ class Uploader(object):
     def __call__(self, message):
         self.sftp.connect()
         self.sftp.uploadFileContents(
-            self.generate_filename(message), message.body)
+            self.determine_filename(message), message.body)
         self.sftp.close()
 
-    def generate_filename(self, message):
-        # XXX extract from gocept.amqprun.writefiles
-        return '%s-%s' % (message.routing_key, time.time())
+    def determine_filename(self, message):
+        filename = message.header.headers and message.header.headers.get(
+            'X-Filename')
+        if not filename:
+            filename = message.generate_filename('${routing_key}-${unique}')
+        return filename
 
 
 class ISFTPDirective(zope.interface.Interface):
