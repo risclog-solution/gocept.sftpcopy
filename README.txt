@@ -60,6 +60,7 @@ timestamp). Here's an example ZCML snippet::
     <configure xmlns="http://namespaces.zope.org/zope"
                xmlns:amqp="http://namespaces.gocept.com/amqp">
 
+      <include package="gocept.amqprun" />
       <include package="gocept.sftpcopy" file="meta.zcml" />
 
       <amqp:sftpupload
