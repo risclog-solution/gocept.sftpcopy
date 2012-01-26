@@ -21,7 +21,6 @@ class SFTPCopy(object):
         self.password = password
         self.remote_path = remote_path
         self.filestore = gocept.filestore.FileStore(local_path)
-        self.filestore.prepare()
 
     def connect(self):
         hostkey = self.getHostKey(self.hostname)
@@ -69,6 +68,11 @@ class SFTPCopy(object):
         remote.write(data)
 
         local.close()
+        remote.close()
+
+    def uploadFileContents(self, filename, data):
+        remote = self.sftp.file(os.path.basename(filename), 'w')
+        remote.write(data)
         remote.close()
 
     def downloadNewFiles(self):
@@ -154,6 +158,8 @@ def main(configdict=sys.argv):
         logfile = sys.stdout
     configure_logging(stream=logfile, level=logging.INFO)
 
+    filestore = gocept.filestore.FileStore(config['local_path'])
+    filestore.prepare()
     cpy = SFTPCopy(config['local_path'],
                    config['hostname'], config.get('port', 22),
                    config['username'], config['password'],

@@ -41,6 +41,12 @@ setup(
         'paramiko',
     ],
     extras_require=dict(
+        amqp=[
+            'zope.component[zcml]',
+            'zope.configuration',
+            'zope.interface',
+            'gocept.amqprun',
+        ],
         test=[
             'sftpserver',
         ]),
