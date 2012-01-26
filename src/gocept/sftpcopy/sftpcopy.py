@@ -12,18 +12,16 @@ import sys
 
 class SFTPCopy(object):
 
-    def __init__(self, mode, filestore,
-                 hostname, port, username, password, remote_path):
+    def __init__(
+        self, local_path, hostname, port, username, password, remote_path):
         self._transport = None
-        if mode not in ('upload', 'download'):
-            raise ValueError("`upload` must bei 'upload' or 'download'")
-        self.mode = mode
         self.hostname = hostname
         self.port = port
         self.username = username
         self.password = password
         self.remote_path = remote_path
-        self.filestore = filestore
+        self.filestore = gocept.filestore.FileStore(local_path)
+        self.filestore.prepare()
 
     def connect(self):
         hostkey = self.getHostKey(self.hostname)
@@ -47,14 +45,6 @@ class SFTPCopy(object):
         logging.info('Disconnecting.')
         self._transport.close()
         self._transport = None
-
-    def copyNewFiles(self):
-        if self.mode == 'upload':
-            self.uploadNewFiles()
-        elif self.mode == 'download':
-            self.downloadNewFiles()
-        else:
-            raise ValueError("Invalid parameter for general/mode")
 
     def uploadNewFiles(self):
         for filename in self.filestore.list('new'):
@@ -173,13 +163,17 @@ def main(configfile=None, configdict=None):
         logfile = sys.stdout
     configure_logging(stream=logfile, level=logging.INFO)
 
-    filestore = gocept.filestore.FileStore(configdict['local_path'])
-    filestore.prepare()
-
-    cpy = SFTPCopy(configdict['mode'], filestore,
+    cpy = SFTPCopy(configdict['mode'], configdict['local_path'],
                    configdict['hostname'], configdict.get('port', 22),
                    configdict['username'], configdict['password'],
                    configdict['remote_path'])
     cpy.connect()
+    if configdict['mode'] == 'upload':
+        cpy.uploadNewFiles()
+    elif configdict['mode'] == 'download':
+        cpy.downloadNewFiles()
+    else:
+        raise ValueError("Invalid parameter for general/mode")
+
     cpy.copyNewFiles()
     cpy.close()
