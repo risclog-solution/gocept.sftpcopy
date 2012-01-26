@@ -41,7 +41,9 @@ setup(
         'paramiko',
     ],
     extras_require=dict(
-        test=[]),
+        test=[
+            'sftpserver',
+        ]),
     entry_points=dict(console_scripts=[
             'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
 )
