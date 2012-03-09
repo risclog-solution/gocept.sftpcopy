@@ -4,7 +4,7 @@ Changelog
 0.3 (unreleased)
 ================
 
-- Nothing changed yet.
+- Make amqp server configurable for tests.
 
 
 0.2 (2012-02-22)
