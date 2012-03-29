@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.3 (unreleased)
-================
+0.2.1 (2012-03-29)
+==================
 
 - Make amqp server configurable for tests.
 - Clean up garbage connections left by tests (#10634).
