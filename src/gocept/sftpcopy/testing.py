@@ -23,6 +23,18 @@ class SFTPServer(sftpserver.stub_sftp.StubServer):
         return paramiko.AUTH_FAILED
 
 
+class Transport(paramiko.Transport):
+
+    def _unlink_channel(self, chanid):
+        # Because they keep a reference to their Transport, Channels aren't
+        # garbage-collected properly, making zope.testrunner complain.
+        # This issue is filed upstream at
+        # <https://github.com/paramiko/paramiko/issues/64>
+        chan = self._channels.get(chanid)
+        super(Transport, self)._unlink_channel(chanid)
+        chan.transport = None
+
+
 class SFTPThread(threading.Thread):
 
     def __init__(self, host, port, directory):
@@ -53,7 +65,7 @@ class SFTPThread(threading.Thread):
             except socket.timeout:
                 continue
 
-            transport = paramiko.Transport(conn)
+            transport = Transport(conn)
             transport.add_server_key(DEFAULT_HOST_KEY)
             transport.set_subsystem_handler(
                 'sftp', paramiko.SFTPServer,
