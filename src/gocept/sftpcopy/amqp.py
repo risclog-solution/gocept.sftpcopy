@@ -51,7 +51,7 @@ def sftp_directive(
         _context, routing_key, queue_name,
         hostname, port, username, password, remote_path, arguments=None):
     uploader = Uploader(hostname, port, username, password, remote_path)
-    handler = gocept.amqprun.handler.HandlerDeclaration(
+    handler = gocept.amqprun.handler.Handler(
         queue_name, routing_key, uploader, arguments)
     zope.component.zcml.utility(
         _context,
