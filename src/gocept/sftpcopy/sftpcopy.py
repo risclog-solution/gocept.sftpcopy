@@ -69,11 +69,20 @@ class SFTPCopy(object):
 
         local.close()
         remote.close()
+        self._check_remote_filesize(basename, len(data))
 
     def uploadFileContents(self, filename, data):
-        remote = self.sftp.file(os.path.basename(filename), 'w')
+        basename = os.path.basename(filename)
+        remote = self.sftp.file(basename, 'w')
         remote.write(data)
         remote.close()
+        self._check_remote_filesize(basename, len(data))
+
+    def _check_remote_filesize(self, filename, size):
+        stat = self.sftp.stat(filename)
+        if stat.st_size != size:
+            raise IOError('Transmitted %s bytes to %r, but %s arrived'
+                          % (size, filename, stat.st_size))
 
     def downloadNewFiles(self):
         sftp = self.sftp
@@ -88,6 +97,7 @@ class SFTPCopy(object):
 
                 remote.close()
                 local.close()
+                self._check_local_filesize(name, len(data))
 
                 filestore.move(name, 'tmp', 'new')
                 logging.info('Downloaded %s' % name)
@@ -97,6 +107,13 @@ class SFTPCopy(object):
             except IOError, e:
                 logging.error('Failed to download %r (IOError: %s)' % (
                     name, e))
+
+    def _check_local_filesize(self, filename, size):
+        filename = os.path.join(self.filestore.path, 'tmp', filename)
+        stat = os.stat(filename)
+        if stat.st_size != size:
+            raise IOError('Transmitted %s bytes to %r, but %s arrived'
+                          % (size, filename, stat.st_size))
 
     def getHostKey(self, hostname):
         try:

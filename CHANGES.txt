@@ -4,7 +4,8 @@ Changelog
 0.2.3 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Check that the size of the transmitted file after up/download matches what
+  was transferred.
 
 
 0.2.2 (2012-04-04)
