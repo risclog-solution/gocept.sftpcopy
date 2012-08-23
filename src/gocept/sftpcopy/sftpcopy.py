@@ -147,7 +147,7 @@ def configure_logging(filename=None, filemode=None, stream=None,
 
 
 def main(configdict=sys.argv):
-    config = configdict # keep parameter name backwards compatible
+    config = configdict  # keep parameter name backwards compatible
     if not isinstance(config, dict):
         # XXX tests for config file mode are missing, so it might not work at
         # all
@@ -168,6 +168,12 @@ def main(configdict=sys.argv):
         config['username'] = parser.get('remote', 'username')
         config['password'] = parser.get('remote', 'password')
         config['remote_path'] = parser.get('remote', 'path')
+
+    VALID_KEYS = set(['logfile', 'mode', 'local_path', 'hostname', 'port',
+                      'username', 'password', 'remote_path'])
+    for key in config.keys():
+        if key not in VALID_KEYS:
+            raise ValueError('Invalid configuration key %r' % key)
 
     if config.get('logfile'):
         logfile = open(config.get('logfile'), 'a')

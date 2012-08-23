@@ -58,3 +58,10 @@ class EndToEndTest(unittest.TestCase):
 
         self.assertEqual(
             0, len(os.listdir(os.path.join(self.tmpdir, 'server'))))
+
+
+class ConfigurationTest(unittest.TestCase):
+
+    def test_invalid_config_key_should_raise(self):
+        self.assertRaises(
+            ValueError, gocept.sftpcopy.sftpcopy.main, dict(invalid=None))
