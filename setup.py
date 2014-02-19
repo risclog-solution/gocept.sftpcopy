@@ -50,6 +50,9 @@ setup(
         test=[
             'sftpserver',
         ]),
+        test_amqp=[
+            'gocept.amqprun[test]',
+        ]),
     entry_points=dict(console_scripts=[
             'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
 )
