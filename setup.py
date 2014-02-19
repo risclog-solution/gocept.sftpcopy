@@ -49,7 +49,7 @@ setup(
         ],
         test=[
             'sftpserver',
-        ]),
+        ],
         test_amqp=[
             'gocept.amqprun[test]',
         ]),
