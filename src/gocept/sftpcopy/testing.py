@@ -37,16 +37,18 @@ class Transport(paramiko.Transport):
 
 class SFTPThread(threading.Thread):
 
-    def __init__(self, host, port, directory):
+    def __init__(self, directory, host='localhost'):
         self.host = host
-        self.port = port
         self.directory = directory
         super(SFTPThread, self).__init__()
         self.daemon = True
+        self.running = False
+
+    def start(self):
+        super(SFTPThread, self).start()
+        self.wait_until_running()
 
     def run(self):
-        self.running = True
-
         # I'd rather use fs.expose.sftp, since it has a much cleaner API, but
         # since it doesn't work at all in lots of obscure ways, I've hacked
         # this together from sftpserver
@@ -56,8 +58,11 @@ class SFTPThread(threading.Thread):
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         server_socket.settimeout(0.1)
-        server_socket.bind((self.host, self.port))
+        server_socket.bind((self.host, 0))  # choose port automatically
         server_socket.listen(10)
+        self.port = server_socket.getsockname()[1]
+
+        self.running = True
 
         while self.running:
             try:
@@ -74,6 +79,14 @@ class SFTPThread(threading.Thread):
             transport.start_server(server=SFTPServer())
             while transport.is_active():
                 time.sleep(0.01)
+
+    def wait_until_running(self, timeout=100):
+        for i in range(timeout):
+            if self.running:
+                break
+            time.sleep(0.05)
+        else:
+            raise RuntimeError('SFTP server did not start up.')
 
     def stop(self):
         self.running = False
