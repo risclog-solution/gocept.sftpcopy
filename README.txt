@@ -38,6 +38,11 @@ The configdict uses the following keys instead:
 - port
 - username
 - password
+- key_filename
+
+key_filename takes precedence over password. If key_filename ends with ``dsa``,
+it's assumed to be a DSA key, else an RSA key. Note that the key file must not
+be password protected.
 
 You can also use sftpcopy as a python object like this::
 
@@ -69,7 +74,7 @@ timestamp). Here's an example ZCML snippet::
         hostname="remote.host"
         port="22"
         username="user"
-        password="secret"
+        password="secret" [ALTERNATIVELY] key_filename="/path/to/private_key"
         remote_path="/path/on/remote/machine"
         arguments="
         x-ha-policy = all
