@@ -14,8 +14,7 @@ class IntegrationTest(gocept.amqprun.testing.MainTestCase):
     def setUp(self):
         super(IntegrationTest, self).setUp()
         self.tmpdir = tempfile.mkdtemp()
-        self.sftp = gocept.sftpcopy.testing.SFTPThread(
-            'localhost', 8022, self.tmpdir)
+        self.sftp = gocept.sftpcopy.testing.SFTPThread(self.tmpdir)
         self.sftp.start()
 
     def tearDown(self):
@@ -28,7 +27,7 @@ class IntegrationTest(gocept.amqprun.testing.MainTestCase):
             __name__, 'upload', dict(
                 routing_key='test.data',
                 queue_name=self.get_queue_name('test'),
-                hostname='localhost', port='8022',
+                hostname='localhost', port=self.sftp.port,
                 username='user', password='secret',
                 remote_path='/'
                 ))
