@@ -48,7 +48,7 @@ You can also use sftpcopy as a python object like this::
 
     import gocept.sftpcopy
     sftp = gocept.sftpcopy.SFTPCopy(
-        'download', '/path/on/local/machine',
+        '/path/on/local/machine',
         'remote.host', 22, 'user', 'secret', '/path/on/remote/machine')
     sftp.connect()
     sftp.uploadNewFiles() # or sftp.downloadNewFiles()
