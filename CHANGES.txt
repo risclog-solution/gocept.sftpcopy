@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.3 (unreleased)
+0.3.0 (2014-02-20)
 ==================
 
 - Support key-based authentication.
