@@ -13,12 +13,14 @@ import sys
 class SFTPCopy(object):
 
     def __init__(
-        self, local_path, hostname, port, username, password, remote_path):
+            self, local_path, hostname, port, username, password, remote_path,
+            key_filename=None):
         self._transport = None
         self.hostname = hostname
         self.port = port
         self.username = username
         self.password = password
+        self.key_filename = key_filename
         self.remote_path = remote_path
         self.filestore = gocept.filestore.FileStore(local_path)
 
@@ -29,9 +31,21 @@ class SFTPCopy(object):
             self.username, self.hostname, self.port, self.remote_path)
         try:
             self._transport = paramiko.Transport((self.hostname, self.port))
-            self._transport.connect(username=self.username,
-                                    password=self.password,
-                                    hostkey=hostkey)
+            connect_args = {
+                'username': self.username,
+                'hostkey': hostkey,
+            }
+            if self.key_filename:
+                ext = self.key_filename[:-3]
+                if ext == 'dsa':
+                    key_class = paramiko.DSSKey
+                else:
+                    key_class = paramiko.RSAKey
+                connect_args['pkey'] = key_class.from_private_key_file(
+                    self.key_filename)
+            else:
+                connect_args['password'] = self.password
+            self._transport.connect(**connect_args)
             self.sftp = paramiko.SFTPClient.from_transport(self._transport)
             self.sftp.chdir(self.remote_path)
         except:

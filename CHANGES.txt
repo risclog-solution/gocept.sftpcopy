@@ -4,6 +4,8 @@ Changelog
 0.2.3 (unreleased)
 ==================
 
+- Support key-based authentication.
+
 - Check that the size of the transmitted file after up/download matches what
   was transferred.
 
