@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2007 gocept gmbh & co. kg
+# Copyright (c) 2006-2014 gocept gmbh & co. kg
 # See also LICENSE.txt
 
 import ConfigParser
@@ -14,7 +14,7 @@ class SFTPCopy(object):
 
     def __init__(
             self, local_path, hostname, port, username, password, remote_path,
-            key_filename=None):
+            key_filename=None, buffer_size=None):
         self._transport = None
         self.hostname = hostname
         self.port = port
@@ -23,6 +23,7 @@ class SFTPCopy(object):
         self.key_filename = key_filename
         self.remote_path = remote_path
         self.filestore = gocept.filestore.FileStore(local_path)
+        self.buffer_size = buffer_size or 64*1024
 
     def connect(self):
         hostkey = self.getHostKey(self.hostname)
@@ -78,12 +79,11 @@ class SFTPCopy(object):
         local = file(filename, 'rb')
         remote = sftp.file(basename, 'w')
 
-        data = local.read()
-        remote.write(data)
+        size = self._copy_file(local, remote)
 
         local.close()
         remote.close()
-        self._check_remote_filesize(basename, len(data))
+        self._check_remote_filesize(basename, size)
 
     def uploadFileContents(self, filename, data):
         basename = os.path.basename(filename)
@@ -106,12 +106,11 @@ class SFTPCopy(object):
                 remote = sftp.file(name, 'r')
                 local = filestore.create(name)
 
-                data = remote.read()
-                local.write(data)
+                size = self._copy_file(remote, local)
 
                 remote.close()
                 local.close()
-                self._check_local_filesize(name, len(data))
+                self._check_local_filesize(name, size)
 
                 filestore.move(name, 'tmp', 'new')
                 logging.info('Downloaded %s' % name)
@@ -121,6 +120,16 @@ class SFTPCopy(object):
             except IOError, e:
                 logging.error('Failed to download %r (IOError: %s)' % (
                     name, e))
+
+    def _copy_file(self, source, target):
+        size = 0
+        while True:
+            data = source.read(self.buffer_size)
+            if not data:
+                break
+            target.write(data)
+            size += len(data)
+        return size
 
     def _check_local_filesize(self, filename, size):
         filename = os.path.join(self.filestore.path, 'tmp', filename)
@@ -175,6 +184,7 @@ def main(configdict=sys.argv):
             pass
 
         config['mode'] = parser.get('general', 'mode')
+        config['buffer_size'] = parser.get('general', 'buffer_size')
         config['local_path'] = parser.get('local', 'path')
 
         config['hostname'] = parser.get('remote', 'hostname')
@@ -184,7 +194,7 @@ def main(configdict=sys.argv):
         config['remote_path'] = parser.get('remote', 'path')
 
     VALID_KEYS = set(['logfile', 'mode', 'local_path', 'hostname', 'port',
-                      'username', 'password', 'remote_path'])
+                      'username', 'password', 'remote_path', 'buffer_size'])
     for key in config.keys():
         if key not in VALID_KEYS:
             raise ValueError('Invalid configuration key %r' % key)
@@ -200,7 +210,8 @@ def main(configdict=sys.argv):
     cpy = SFTPCopy(config['local_path'],
                    config['hostname'], config.get('port', 22),
                    config['username'], config['password'],
-                   config['remote_path'])
+                   config['remote_path'],
+                   buffer_size=config.get('buffer_size'))
     cpy.connect()
     if config['mode'] == 'upload':
         cpy.uploadNewFiles()

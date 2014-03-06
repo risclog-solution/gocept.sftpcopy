@@ -4,7 +4,8 @@ Changelog
 0.3.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Copy files in chunks instead of loading each complete file into memory.
+  There is a new config option ``buffer_size'' which defaults to 64 kB.
 
 
 0.3.0 (2014-02-20)

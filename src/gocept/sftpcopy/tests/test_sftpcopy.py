@@ -1,4 +1,4 @@
-# Copyright (c) 2012 gocept gmbh & co. kg
+# Copyright (c) 2012-2014 gocept gmbh & co. kg
 # See also LICENSE.txt
 
 import gocept.sftpcopy.sftpcopy
@@ -34,6 +34,7 @@ class EndToEndTest(unittest.TestCase):
         f.close()
 
         self.config['mode'] = 'upload'
+        self.config['buffer_size'] = 3
         gocept.sftpcopy.sftpcopy.main(self.config)
 
         uploaded = os.path.join(self.tmpdir, 'server', 'foo')
@@ -49,6 +50,7 @@ class EndToEndTest(unittest.TestCase):
         f.close()
 
         self.config['mode'] = 'download'
+        self.config['buffer_size'] = 3
         gocept.sftpcopy.sftpcopy.main(self.config)
 
         downloaded = os.path.join(self.tmpdir, 'new', 'foo')
