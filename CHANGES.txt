@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.1 (unreleased)
+0.4.0 (2014-03-07)
 ==================
 
 - Copy files in chunks instead of loading each complete file into memory.
