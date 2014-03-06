@@ -4,14 +4,14 @@ Changelog
 0.5.0 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fixed brown-bag release.
 
 
 0.4.0 (2014-03-07)
 ==================
 
 - Copy files in chunks instead of loading each complete file into memory.
-  There is a new config option ``buffer_size'' which defaults to 64 kB.
+  There is a new config option ``buffer_size`` which defaults to 64 kB.
 
 
 0.3.0 (2014-02-20)
