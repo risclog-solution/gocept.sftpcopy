@@ -14,7 +14,7 @@ class SFTPCopy(object):
 
     def __init__(
             self, local_path, hostname, port, username, password, remote_path,
-            key_filename=None, buffer_size=None):
+            key_filename=None, buffer_size=None, keepalive_interval=5):
         self._transport = None
         self.hostname = hostname
         self.port = port
@@ -24,6 +24,7 @@ class SFTPCopy(object):
         self.remote_path = remote_path
         self.filestore = gocept.filestore.FileStore(local_path)
         self.buffer_size = buffer_size or 64*1024
+        self.keepalive_interval = keepalive_interval
 
     def connect(self):
         hostkey = self.getHostKey(self.hostname)
@@ -32,6 +33,7 @@ class SFTPCopy(object):
             self.username, self.hostname, self.port, self.remote_path)
         try:
             self._transport = paramiko.Transport((self.hostname, self.port))
+            self._transport.set_keepalive(self.keepalive_interval)
             connect_args = {
                 'username': self.username,
                 'hostkey': hostkey,
@@ -185,6 +187,8 @@ def main(configdict=sys.argv):
 
         config['mode'] = parser.get('general', 'mode')
         config['buffer_size'] = parser.get('general', 'buffer_size')
+        config['keepalive_interval'] = parser.get(
+            'general', 'keepalive_interval')
         config['local_path'] = parser.get('local', 'path')
 
         config['hostname'] = parser.get('remote', 'hostname')
@@ -194,7 +198,8 @@ def main(configdict=sys.argv):
         config['remote_path'] = parser.get('remote', 'path')
 
     VALID_KEYS = set(['logfile', 'mode', 'local_path', 'hostname', 'port',
-                      'username', 'password', 'remote_path', 'buffer_size'])
+                      'username', 'password', 'remote_path', 'buffer_size',
+                      'keepalive_interval'])
     for key in config.keys():
         if key not in VALID_KEYS:
             raise ValueError('Invalid configuration key %r' % key)
