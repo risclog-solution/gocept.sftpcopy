@@ -33,7 +33,8 @@ buildout integration). The configuration file has the following format::
 The configdict uses the following keys instead:
 
 - logfile
-- buffer_size
+- buffer_size (default: 65536, i.e. 64 KiB)
+- keepalive_interval (default: 5 seconds)
 - local_path
 - remote_path
 - hostname
@@ -46,8 +47,8 @@ key_filename takes precedence over password. If key_filename ends with ``dsa``,
 it's assumed to be a DSA key, else an RSA key. Note that the key file must not
 be password protected.
 
-buffer_size defaults to 65536. Files are copied in chunks of this size to
-avoid loading big files into memory at once.
+Files are copied in chunks of buffer_size to avoid loading big files into
+memory at once.
 
 You can also use sftpcopy as a python object like this::
 
