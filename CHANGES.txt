@@ -4,7 +4,7 @@ Changelog
 0.5.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Update `bootstrap.py` to version from ``zc.buildout 2.3.0``.
 
 
 0.5.0 (2014-11-26)
@@ -80,4 +80,3 @@ Changelog
 
 - Fixed brown back release 0.1 which was not usable at all since there were
   various files missing in the archive.
-
