@@ -6,6 +6,8 @@ Changelog
 
 - Update `bootstrap.py` to version from ``zc.buildout 2.3.0``.
 
+- Move repository to `bitbucket.org`.
+
 
 0.5.0 (2014-11-26)
 ==================
