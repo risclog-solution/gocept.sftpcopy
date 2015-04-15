@@ -26,7 +26,7 @@ setup(
     ],
 
     license="ZPL 2.1",
-    url='https://code.gocept.com/hg/public/gocept.sftpcopy',
+    url='https://bitbucket.org/gocept/gocept.sftpcopy',
 
     packages=find_packages('src'),
     package_dir={'': 'src'},
