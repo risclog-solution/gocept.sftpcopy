@@ -8,9 +8,9 @@ import os.path
 setup(
     name='gocept.sftpcopy',
     version='0.5.1.dev0',
-    author="Christian Zagrodnick <cz at gocept dot com>",
-    author_email="cz@gocept.com",
-    description="Upload/download files via SFTP to a  maildir structure",
+    author="Christian Zagrodnick",
+    author_email="mail@gocept.com",
+    description="Upload/download files via SFTP to a maildir structure",
     long_description=(
         open(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
         + '\n\n'
@@ -18,11 +18,24 @@ setup(
         + '\n\n'
         ),
     classifiers=[
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Developers',
+        'License :: OSI Approved',
+        'Natural Language :: English',
         'License :: OSI Approved :: Zope Public License',
         'Programming Language :: Python',
+        'Operating System :: POSIX',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: POSIX :: BSD',
         'Operating System :: Unix',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2 :: Only',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Topic :: Communications',
+        'Topic :: Internet',
+        'Topic :: Internet :: File Transfer Protocol (FTP)',
     ],
 
     license="ZPL 2.1",
