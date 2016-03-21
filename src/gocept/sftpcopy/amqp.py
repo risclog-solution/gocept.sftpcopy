@@ -1,6 +1,3 @@
-# Copyright (c) 2012 gocept gmbh & co. kg
-# See also LICENSE.txt
-
 import gocept.amqprun.handler
 import gocept.amqprun.interfaces
 import zope.component.zcml
@@ -55,8 +52,8 @@ def sftp_directive(
         _context, routing_key, queue_name,
         hostname, port, username, remote_path,
         password=None, key_filename=None, arguments=None):
-    if ((not (password or key_filename))
-        or (password and key_filename)):
+    if ((not (password or key_filename)) or
+            (password and key_filename)):
         raise ValueError(
             'Exactly one of `password` or `key_filename` is required')
     uploader = Uploader(hostname, port, username, password, key_filename,
