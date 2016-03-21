@@ -6,6 +6,8 @@ Changelog
 
 - Pinning version numbers of dependencies for tests.
 
+- Migrate to py.test as testrunner.
+
 
 0.5.1 (2015-04-15)
 ==================
