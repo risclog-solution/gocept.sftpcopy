@@ -8,6 +8,8 @@ Changelog
 
 - Migrate to py.test as testrunner.
 
+- Add new `skip_files` parameter to skip upload or download of files.
+
 
 0.5.1 (2015-04-15)
 ==================

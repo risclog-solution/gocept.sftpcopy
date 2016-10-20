@@ -32,33 +32,43 @@ class EndToEndTest(unittest.TestCase):
         f = open(os.path.join(self.tmpdir, 'new', 'foo'), 'w')
         f.write('contents')
         f.close()
+        f = open(os.path.join(self.tmpdir, 'new', 'ignore'), 'w').close()
 
         self.config['mode'] = 'upload'
         self.config['buffer_size'] = 3
+        self.config['skip_files'] = ['ignore']
         gocept.sftpcopy.sftpcopy.main(self.config)
 
         uploaded = os.path.join(self.tmpdir, 'server', 'foo')
         self.assertTrue(os.path.isfile(uploaded))
         self.assertEqual('contents', open(uploaded).read())
 
-        self.assertEqual(0, len(os.listdir(os.path.join(self.tmpdir, 'new'))))
+        # 1 file was not copied
+        self.assertEqual(1, len(os.listdir(os.path.join(self.tmpdir, 'new'))))
+        # 1 file was copied
         self.assertEqual(1, len(os.listdir(os.path.join(self.tmpdir, 'cur'))))
 
     def test_download(self):
         f = open(os.path.join(self.tmpdir, 'server', 'foo'), 'w')
         f.write('contents')
         f.close()
+        f = open(os.path.join(self.tmpdir, 'server', 'ignore'), 'w').close()
 
         self.config['mode'] = 'download'
         self.config['buffer_size'] = 3
+        self.config['skip_files'] = ['ignore']
         gocept.sftpcopy.sftpcopy.main(self.config)
 
         downloaded = os.path.join(self.tmpdir, 'new', 'foo')
         self.assertTrue(os.path.isfile(downloaded))
         self.assertEqual('contents', open(downloaded).read())
 
+        ignored = os.path.join(self.tmpdir, 'new', 'ignore')
+        self.assertFalse(os.path.isfile(ignored))
+
+        # 1 file was not copied
         self.assertEqual(
-            0, len(os.listdir(os.path.join(self.tmpdir, 'server'))))
+            1, len(os.listdir(os.path.join(self.tmpdir, 'server'))))
 
 
 class ConfigurationTest(unittest.TestCase):
