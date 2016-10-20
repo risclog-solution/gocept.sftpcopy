@@ -14,11 +14,13 @@ class SFTPCopy(object):
 
     def __init__(
             self, local_path, hostname, port, username, password, remote_path,
-            key_filename=None, buffer_size=None, keepalive_interval=5):
+            key_filename=None, buffer_size=None, skip_files=None,
+            keepalive_interval=5):
         self._transport = None
         self.hostname = hostname
         self.port = port
         self.username = username
+        self.skip_files = [] if skip_files is None else skip_files
         self.password = password
         self.key_filename = key_filename
         self.remote_path = remote_path
@@ -64,6 +66,8 @@ class SFTPCopy(object):
 
     def uploadNewFiles(self):
         for filename in self.filestore.list('new'):
+            if os.path.basename(filename) in self.skip_files:
+                continue
             basename = os.path.basename(filename)
             try:
                 self.uploadFile(filename)
@@ -105,6 +109,8 @@ class SFTPCopy(object):
         filestore = self.filestore
         for name in sftp.listdir():
             try:
+                if name in self.skip_files:
+                    continue
                 remote = sftp.file(name, 'r')
                 local = filestore.create(name)
 
@@ -187,6 +193,7 @@ def main(configdict=sys.argv):
 
         config['mode'] = parser.get('general', 'mode')
         config['buffer_size'] = parser.get('general', 'buffer_size')
+        config['skip_files'] = parser.get('general', 'skip_files')
         config['keepalive_interval'] = parser.get(
             'general', 'keepalive_interval')
         config['local_path'] = parser.get('local', 'path')
@@ -199,7 +206,7 @@ def main(configdict=sys.argv):
 
     VALID_KEYS = set(['logfile', 'mode', 'local_path', 'hostname', 'port',
                       'username', 'password', 'remote_path', 'buffer_size',
-                      'keepalive_interval'])
+                      'keepalive_interval', 'skip_files'])
     for key in config.keys():
         if key not in VALID_KEYS:
             raise ValueError('Invalid configuration key %r' % key)
@@ -216,7 +223,8 @@ def main(configdict=sys.argv):
                    config['hostname'], config.get('port', 22),
                    config['username'], config['password'],
                    config['remote_path'],
-                   buffer_size=config.get('buffer_size'))
+                   buffer_size=config.get('buffer_size'),
+                   skip_files=config.get('skip_files'))
     cpy.connect()
     if config['mode'] == 'upload':
         cpy.uploadNewFiles()
