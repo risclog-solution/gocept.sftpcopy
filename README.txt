@@ -19,6 +19,9 @@ buildout integration). The configuration file has the following format::
     mode = upload # or download
     logfile = /path/to/logfile # defaults to stdout if not given
     buffer_size = 65536
+    skip_files =
+        name_of_file_to_skip_1
+        name_of_file_to_skip_2
 
     [local]
     path = /path/on/local/machine
@@ -42,10 +45,14 @@ The configdict uses the following keys instead:
 - username
 - password
 - key_filename
+- skip_files
 
 key_filename takes precedence over password. If key_filename ends with ``dsa``,
 it's assumed to be a DSA key, else an RSA key. Note that the key file must not
 be password protected.
+
+`skip_files` is a list of filenames (local or remote), which are skipped during
+upload or download.
 
 Files are copied in chunks of buffer_size to avoid loading big files into
 memory at once.
@@ -55,7 +62,8 @@ You can also use sftpcopy as a python object like this::
     import gocept.sftpcopy
     sftp = gocept.sftpcopy.SFTPCopy(
         '/path/on/local/machine',
-        'remote.host', 22, 'user', 'secret', '/path/on/remote/machine')
+        'remote.host', 22, 'user', 'secret', '/path/on/remote/machine',
+        skip_files=['my_file_to_ignore'])
     sftp.connect()
     sftp.uploadNewFiles() # or sftp.downloadNewFiles()
 
