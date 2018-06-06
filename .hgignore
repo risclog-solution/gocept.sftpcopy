@@ -1,9 +1,10 @@
 syntax: glob
-*.pyc
 *.egg-info
+*.pyc
 .cache
 .coverage
 .installed.cfg
+.pytest_cache
 bin
 coverage-report
 coverage.xml
