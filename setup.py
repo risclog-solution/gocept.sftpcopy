@@ -12,9 +12,9 @@ setup(
     author_email="mail@gocept.com",
     description="Upload/download files via SFTP to a maildir structure",
     long_description=(
-        open(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
+        open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
         + '\n\n'
-        + open(os.path.join(os.path.dirname(__file__), 'CHANGES.txt')).read()
+        + open(os.path.join(os.path.dirname(__file__), 'CHANGES.rst')).read()
         + '\n\n'
         ),
     classifiers=[
