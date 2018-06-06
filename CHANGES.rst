@@ -4,7 +4,7 @@ Changelog
 0.6.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Improve Python3 forward compatibility.
 
 
 0.6.0 (2016-11-02)

@@ -25,7 +25,7 @@ class SFTPCopy(object):
         self.key_filename = key_filename
         self.remote_path = remote_path
         self.filestore = gocept.filestore.FileStore(local_path)
-        self.buffer_size = buffer_size or 64*1024
+        self.buffer_size = buffer_size or 64 * 1024
         self.keepalive_interval = keepalive_interval
 
     def connect(self):
@@ -53,7 +53,7 @@ class SFTPCopy(object):
             self._transport.connect(**connect_args)
             self.sftp = paramiko.SFTPClient.from_transport(self._transport)
             self.sftp.chdir(self.remote_path)
-        except:
+        except Exception:
             logging.error('Error connecting to %s' % url, exc_info=True)
             raise
         else:
@@ -71,7 +71,7 @@ class SFTPCopy(object):
             basename = os.path.basename(filename)
             try:
                 self.uploadFile(filename)
-            except IOError, e:
+            except IOError as e:
                 logging.error('Failed to upload %s (IOError: %s)' % (basename,
                                                                      e))
             else:
@@ -82,7 +82,7 @@ class SFTPCopy(object):
         basename = os.path.basename(filename)
         sftp = self.sftp
 
-        local = file(filename, 'rb')
+        local = open(filename, 'rb')
         remote = sftp.file(basename, 'w')
 
         size = self._copy_file(local, remote)
@@ -125,7 +125,7 @@ class SFTPCopy(object):
 
                 sftp.unlink(name)
                 logging.info('Removed remote file %s' % name)
-            except IOError, e:
+            except IOError as e:
                 logging.error('Failed to download %r (IOError: %s)' % (
                     name, e))
 
