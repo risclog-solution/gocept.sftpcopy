@@ -6,6 +6,8 @@ Changelog
 
 - Improve Python3 forward compatibility.
 
+- Migrate to Github.
+
 
 0.6.0 (2016-11-02)
 ==================
