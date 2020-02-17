@@ -1,12 +1,12 @@
 language: python
 python:
-- 2.7
+  - 2.7
 install:
-- pip install -U setuptools zc.buildout setuptools-scm
-- buildout -n
+  - pip install -U setuptools zc.buildout setuptools-scm
+  - buildout -n
 script:
-- bin/test --cache-clear --cov-report term-missing --cov src
-after_success: 
+  - bin/test --cache-clear --cov-report term-missing --cov src
+after_success:
 cache:
   pip: true
   directories:
