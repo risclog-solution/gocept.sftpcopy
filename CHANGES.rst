@@ -4,7 +4,9 @@ Changelog
 0.6.1 (unreleased)
 ==================
 
-- Improve Python3 forward compatibility.
+- Improve Python 3 forward compatibility.
+
+- Keep Python 2 compatibility even though some dependencies dropped it.
 
 - Migrate to Github.
 

@@ -57,8 +57,8 @@ setup(
         amqp=[
             'zope.component[zcml]',
             'zope.configuration',
-            'zope.interface',
-            'gocept.amqprun>=0.8.dev',
+            'zope.interface < 5',
+            'gocept.amqprun>=0.8.dev, < 2',
         ],
         test=[
             'sftpserver',
