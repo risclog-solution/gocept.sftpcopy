@@ -132,7 +132,7 @@ class SFTPCopy(object):
     def _copy_file(self, source, target):
         size = 0
         while True:
-            data = source.read(self.buffer_size)
+            data = source.read(int(self.buffer_size))
             if not data:
                 break
             target.write(data)
