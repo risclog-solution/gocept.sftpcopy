@@ -7,7 +7,7 @@ import os.path
 
 setup(
     name='gocept.sftpcopy',
-    version='1.0.0.dev0',
+    version='1.0.0',
     author="Christian Zagrodnick",
     author_email="mail@gocept.com",
     description="Upload/download files via SFTP to a maildir structure",
