@@ -112,7 +112,7 @@ class SFTPCopy(object):
                 if name in self.skip_files:
                     continue
                 remote = sftp.file(name, 'r')
-                local = filestore.create(name)
+                local = filestore.create(name, mode='wb')
 
                 size = self._copy_file(remote, local)
 
@@ -135,10 +135,6 @@ class SFTPCopy(object):
             data = source.read(int(self.buffer_size))
             if not data:
                 break
-            try:
-                data = data.decode('utf-8')
-            except UnicodeDecodeError:
-                data = data.decode('latin-1')
             target.write(data)
             size += len(data)
         return size
@@ -146,7 +142,7 @@ class SFTPCopy(object):
     def _check_local_filesize(self, filename, size):
         filename = os.path.join(self.filestore.path, 'tmp', filename)
         stat = os.stat(filename)
-        if stat.st_size < size:
+        if stat.st_size != size:
             raise IOError('Transmitted %s bytes to %r, but %s arrived'
                           % (size, filename, stat.st_size))
 
