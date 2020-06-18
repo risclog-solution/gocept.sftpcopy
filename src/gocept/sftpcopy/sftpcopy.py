@@ -1,7 +1,7 @@
 # Copyright (c) 2006-2014 gocept gmbh & co. kg
 # See also LICENSE.txt
 
-import ConfigParser
+import configparser
 import gocept.filestore
 import logging
 import os
@@ -112,7 +112,7 @@ class SFTPCopy(object):
                 if name in self.skip_files:
                     continue
                 remote = sftp.file(name, 'r')
-                local = filestore.create(name)
+                local = filestore.create(name, mode='wb')
 
                 size = self._copy_file(remote, local)
 
@@ -132,7 +132,7 @@ class SFTPCopy(object):
     def _copy_file(self, source, target):
         size = 0
         while True:
-            data = source.read(self.buffer_size)
+            data = source.read(int(self.buffer_size))
             if not data:
                 break
             target.write(data)
@@ -182,13 +182,17 @@ def main(configdict=sys.argv):
     if not isinstance(config, dict):
         # XXX tests for config file mode are missing, so it might not work at
         # all
-        parser = ConfigParser.SafeConfigParser()
-        parser.read(config[1])
+        if len(config) > 1:
+            config_file_name = config[1]
+        else:
+            config_file_name = 'sftpcopy.ini'
+        parser = configparser.SafeConfigParser()
+        parser.read(config_file_name)
         config = {}
 
         try:
             config['logfile'] = parser.get('general', 'logfile')
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             pass
 
         config['mode'] = parser.get('general', 'mode')

@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 import paramiko
 import sftpserver.stub_sftp
 import socket

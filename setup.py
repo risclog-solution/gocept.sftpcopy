@@ -7,7 +7,7 @@ import os.path
 
 setup(
     name='gocept.sftpcopy',
-    version='0.6.1.dev0',
+    version='1.0.1.dev0',
     author="Christian Zagrodnick",
     author_email="mail@gocept.com",
     description="Upload/download files via SFTP to a maildir structure",
@@ -29,9 +29,10 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Operating System :: POSIX :: BSD',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 2 :: Only',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Communications',
         'Topic :: Internet',
@@ -54,18 +55,10 @@ setup(
         'paramiko',
     ],
     extras_require=dict(
-        amqp=[
-            'zope.component[zcml]',
-            'zope.configuration',
-            'zope.interface < 5',
-            'gocept.amqprun>=0.8.dev, < 2',
-        ],
         test=[
             'sftpserver',
         ],
-        test_amqp=[
-            'gocept.amqprun[test]',
-        ]),
+    ),
     entry_points=dict(console_scripts=[
             'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
 )
