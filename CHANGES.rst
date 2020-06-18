@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0 (unreleased)
+2.0 (2020-06-18)
 ================
 
 Backward incompatible changes
