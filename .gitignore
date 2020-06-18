@@ -4,6 +4,7 @@
 .coverage
 .installed.cfg
 .pytest_cache
+.tox/
 bin
 coverage-report
 coverage.xml

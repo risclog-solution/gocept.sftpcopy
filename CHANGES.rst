@@ -1,22 +1,21 @@
 Changelog
 =========
 
-1.0.1 (unreleased)
-==================
+2.0 (unreleased)
+================
 
-- Nothing changed yet.
+Backward incompatible changes
+-----------------------------
 
+- Remove AMQP integration. If you need AMQP integration, stick to using a
+  version < 1.0.
 
-1.0.0 (2020-05-13)
-==================
+Other changes
+-------------
 
-- Add Python 3, remove Python 2 compatability.
+- Add support for Python 3.7 and 3.8.
 
 - Migrate to Github.
-
-- Remove amqp integration, as its not Python 3 compatible. If you need amqp
-  integration, please use version < 1.0 until its ported to Python 3 and
-  reintegrated.
 
 
 0.6.0 (2016-11-02)
