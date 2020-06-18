@@ -1,23 +1,17 @@
 language: python
-services:
-  - rabbitmq
-addons:
-  apt:
-    packages:
-    - rabbitmq-server
 python:
   - 2.7
+  - 3.7
+  - 3.8
+  - 3.9-dev
 install:
-  - pip install -U setuptools zc.buildout setuptools-scm coveralls
-  - buildout -n
+  - pip install -U tox-travis coveralls
 script:
-  - bin/test --cache-clear --cov-report term-missing --cov src
+  - tox
 after_success:
   - coveralls
 cache:
   pip: true
-  directories:
-    - eggs/
 notifications:
   webhooks:
     secure: dFHTUR+Rdvt1oza9VIl0ilS+GqmTwhGYOeGP6tCwwl76qqOD/ZEd8fBxSMJujY9yWnsuNqN93bp/goJjrsjYSnzzXuWt3KwVyY9/KQ7D72eu8NEp/FeS0vqEANcJPmah707j4VgaFwIb0blUoEN6W+SZKjahjAlpomdOwG199pEoO3yaoIj3GejdyehJhJKXr9JFvqf8qEHSbSWQvRY2IcCuuQc0FZBMXy2+gsjy4nBtx9FE5yn5RPUs1ZJJ616nUQtkVFDq1az+XydsDkBblLOd+HIyx9jbl3P5cOJ2d51w0hvqqWCqcC/fw+3iwVtq81/7nIiHOF8+0inXZnpmkKm9ZxomtcuKi9P1JgPn9jd8VvCcOSsNsPbLjGYoG4YFYwHxv87ZWVktNmUp5m5tmdiPv/nFG9ZfCoKJbnXsXu7Kr+WHiNEl2uU5fdjKNRRuwR/DDSkeq579wTsMDBeGC0znsNqSr1+kZgeXxlDRSyEEM7M2hvZ/x/2vPx4V+45MNLy70RbnDRt6PT/FkNbZU1XleLX0XJc5JQz3B1RQl5vkgjB7g7q0PEOCcIwhPuWmq+h7FZtlzHO/MgP1SK5bLC4MNG+yt+Sd5wtBDZqfCQ8M0KnL8p/sccCcnV9hwDMfesqJQbdsfgxzm2SDQ53JuAqScB24lWPkbegMt2MXvGo=

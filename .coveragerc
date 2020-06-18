@@ -4,10 +4,8 @@ source = gocept.sftpcopy
 
 [report]
 precision = 2
-omit = */interfaces.py
-       */interfaces
-       */tests/*
-       */tests.py
+exclude_lines =
+    pragma: nocover
 
 [html]
 directory = coverage-report

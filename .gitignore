@@ -1,10 +1,10 @@
-syntax: glob
 *.egg-info
 *.pyc
 .cache
 .coverage
 .installed.cfg
 .pytest_cache
+.tox/
 bin
 coverage-report
 coverage.xml
@@ -14,3 +14,4 @@ include
 lib
 local
 parts
+pyvenv.cfg

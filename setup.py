@@ -1,4 +1,4 @@
-# Copyright (c) 2007 gocept gmbh & co. kg
+# Copyright (c) 2007-2020 gocept gmbh & co. kg
 # See also LICENSE.txt
 
 from setuptools import setup, find_packages
@@ -7,7 +7,7 @@ import os.path
 
 setup(
     name='gocept.sftpcopy',
-    version='0.6.1.dev0',
+    version='2.0.dev0',
     author="Christian Zagrodnick",
     author_email="mail@gocept.com",
     description="Upload/download files via SFTP to a maildir structure",
@@ -16,7 +16,7 @@ setup(
         + '\n\n'
         + open(os.path.join(os.path.dirname(__file__), 'CHANGES.rst')).read()
         + '\n\n'
-        ),
+    ),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -31,7 +31,9 @@ setup(
         'Operating System :: Unix',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 2 :: Only',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Communications',
         'Topic :: Internet',
@@ -49,23 +51,16 @@ setup(
 
     namespace_packages=['gocept'],
     install_requires=[
+        'configparser;python_version<"3"',
         'setuptools',
         'gocept.filestore',
         'paramiko',
     ],
     extras_require=dict(
-        amqp=[
-            'zope.component[zcml]',
-            'zope.configuration',
-            'zope.interface < 5',
-            'gocept.amqprun>=0.8.dev, < 2',
-        ],
         test=[
             'sftpserver',
         ],
-        test_amqp=[
-            'gocept.amqprun[test]',
-        ]),
+    ),
     entry_points=dict(console_scripts=[
-            'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
+        'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
 )
