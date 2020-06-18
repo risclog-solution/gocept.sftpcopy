@@ -4,8 +4,8 @@ source = gocept.sftpcopy
 
 [report]
 precision = 2
-omit =
-    pragma: no-cover
+exclude_lines =
+    pragma: nocover
 
 [html]
 directory = coverage-report

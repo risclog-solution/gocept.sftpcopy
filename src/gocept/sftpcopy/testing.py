@@ -17,7 +17,7 @@ class SFTPServer(sftpserver.stub_sftp.StubServer):
     def check_auth_password(self, username, password):
         if username == self.username and password == self.password:
             return paramiko.AUTH_SUCCESSFUL
-        return paramiko.AUTH_FAILED
+        return paramiko.AUTH_FAILED  # pragma: nocover
 
 
 class Transport(paramiko.Transport):
@@ -82,7 +82,7 @@ class SFTPThread(threading.Thread):
             if self.running:
                 break
             time.sleep(0.05)
-        else:
+        else:  # pragma: nocover
             raise RuntimeError('SFTP server did not start up.')
 
     def stop(self):

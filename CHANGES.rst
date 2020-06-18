@@ -17,6 +17,11 @@ Other changes
 
 - Migrate to Github.
 
+Info
+----
+
+- Version 1.0 was in internal release, so omitting it here.
+
 
 0.6.0 (2016-11-02)
 ==================

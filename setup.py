@@ -51,6 +51,7 @@ setup(
 
     namespace_packages=['gocept'],
     install_requires=[
+        'configparser;python_version<"3"',
         'setuptools',
         'gocept.filestore',
         'paramiko',
