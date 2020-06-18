@@ -7,7 +7,7 @@ python:
 install:
   - pip install -U tox-travis coveralls
 script:
-  - bin/tox
+  - tox
 after_success:
   - coveralls
 cache:
