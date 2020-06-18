@@ -1,4 +1,4 @@
-# Copyright (c) 2007 gocept gmbh & co. kg
+# Copyright (c) 2007-2020 gocept gmbh & co. kg
 # See also LICENSE.txt
 
 from setuptools import setup, find_packages
@@ -16,7 +16,7 @@ setup(
         + '\n\n'
         + open(os.path.join(os.path.dirname(__file__), 'CHANGES.rst')).read()
         + '\n\n'
-        ),
+    ),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -60,5 +60,5 @@ setup(
         ],
     ),
     entry_points=dict(console_scripts=[
-            'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
+        'sftpcopy=gocept.sftpcopy.sftpcopy:main']),
 )

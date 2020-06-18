@@ -3,7 +3,8 @@ SFTPCopy
 ========
 
 sftpcopy allows to copy files to or from a remote server -- integrates with
-gocept.filestore. sftpcopy will take files from the ``new`` directory, copy
+`gocept.filestore <https://pypi.org/project/gocept.filestore/>`_.
+sftpcopy will take files from the ``new`` directory, copy
 them to the remote server and put them into ``cur`` on success. Likewise it will
 download files from the remote server and put them into the ``new``
 directory for another application to pick it up.
@@ -51,7 +52,7 @@ key_filename takes precedence over password. If key_filename ends with ``dsa``,
 it's assumed to be a DSA key, else an RSA key. Note that the key file must not
 be password protected.
 
-`skip_files` is a list of filenames (local or remote), which are skipped during
+``skip_files`` is a list of filenames (local or remote), which are skipped during
 upload or download.
 
 Files are copied in chunks of buffer_size to avoid loading big files into
@@ -65,4 +66,4 @@ You can also use sftpcopy as a python object like this::
         'remote.host', 22, 'user', 'secret', '/path/on/remote/machine',
         skip_files=['my_file_to_ignore'])
     sftp.connect()
-    sftp.uploadNewFiles() # or sftp.downloadNewFiles()
+    sftp.uploadNewFiles()  # or sftp.downloadNewFiles()
