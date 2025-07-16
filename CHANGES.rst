@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1 (unreleased)
+2.1 (2025-07-16)
 ================
 
 - Add compatability to Python 3.11 and 3.12.
