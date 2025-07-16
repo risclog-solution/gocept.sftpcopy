@@ -4,7 +4,7 @@ Changelog
 2.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- Add compatability to Python 3.11 and 3.12.
 
 
 2.0 (2020-06-18)

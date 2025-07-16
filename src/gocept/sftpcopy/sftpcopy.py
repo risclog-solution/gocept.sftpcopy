@@ -186,7 +186,7 @@ def main(configdict=sys.argv):
             config_file_name = config[1]
         else:
             config_file_name = 'sftpcopy.ini'
-        parser = configparser.SafeConfigParser()
+        parser = configparser.ConfigParser()
         parser.read(config_file_name)
         config = {}
 
