@@ -5,3 +5,4 @@ include pytest.ini
 include tox.ini
 recursive-include src *.conf
 recursive-include src *.zcml
+exclude .pre-commit-config.yaml

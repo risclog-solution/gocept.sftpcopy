@@ -7,12 +7,11 @@ import time
 
 
 class SFTPServer(sftpserver.stub_sftp.StubServer):
-
-    username = 'user'
-    password = 'secret'
+    username = "user"
+    password = "secret"
 
     def get_allowed_auths(self, username):
-        return 'password'
+        return "password"
 
     def check_auth_password(self, username, password):
         if username == self.username and password == self.password:
@@ -21,7 +20,6 @@ class SFTPServer(sftpserver.stub_sftp.StubServer):
 
 
 class Transport(paramiko.Transport):
-
     def _unlink_channel(self, chanid):
         # Because they keep a reference to their Transport, Channels aren't
         # garbage-collected properly, making zope.testrunner complain.
@@ -33,8 +31,7 @@ class Transport(paramiko.Transport):
 
 
 class SFTPThread(threading.Thread):
-
-    def __init__(self, directory, host='localhost'):
+    def __init__(self, directory, host="localhost"):
         self.host = host
         self.directory = directory
         super(SFTPThread, self).__init__()
@@ -70,8 +67,8 @@ class SFTPThread(threading.Thread):
             transport = Transport(conn)
             transport.add_server_key(DEFAULT_HOST_KEY)
             transport.set_subsystem_handler(
-                'sftp', paramiko.SFTPServer,
-                sftpserver.stub_sftp.StubSFTPServer)
+                "sftp", paramiko.SFTPServer, sftpserver.stub_sftp.StubSFTPServer
+            )
 
             transport.start_server(server=SFTPServer())
             while transport.is_active():
@@ -83,7 +80,7 @@ class SFTPThread(threading.Thread):
                 break
             time.sleep(0.05)
         else:  # pragma: nocover
-            raise RuntimeError('SFTP server did not start up.')
+            raise RuntimeError("SFTP server did not start up.")
 
     def stop(self):
         self.running = False
@@ -91,18 +88,21 @@ class SFTPThread(threading.Thread):
 
 
 DEFAULT_HOST_KEY = paramiko.RSAKey.from_private_key(
-    StringIO(u"-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKCAIEAl7sAF0x2O/Hw"
-             u"LhG68b1uG8KHSOTqe3Cdlj5i/1RhO7E2BJ4B\n3jhKYDYtupRnMFbpu7fb21A"
-             u"24w3Y3W5gXzywBxR6dP2HgiSDVecoDg2uSYPjnlDk\nHrRuviSBG3XpJ/awn1"
-             u"DObxRIvJP4/sCqcMY8Ro/3qfmid5WmMpdCZ3EBeC0CAwEA\nAQKCAIBSGefUs"
-             u"5UOnr190C49/GiGMN6PPP78SFWdJKjgzEHI0P0PxofwPLlSEj7w\nRLkJWR4k"
-             u"azpWE7N/bNC6EK2pGueMN9Ag2GxdIRC5r1y8pdYbAkuFFwq9Tqa6j5B0\nGkk"
-             u"wEhrcFNBGx8UfzHESXe/uE16F+e8l6xBMcXLMJVo9Xjui6QJBAL9MsJEx93iO"
-             u"\nzwjoRpSNzWyZFhiHbcGJ0NahWzc3wASRU6L9M3JZ1VkabRuWwKNuEzEHNK8"
-             u"cLbRl\nTyH0mceWXcsCQQDLDEuWcOeoDteEpNhVJFkXJJfwZ4Rlxu42MDsQQ/"
-             u"paJCjt2ONU\nWBn/P6iYDTvxrt/8+CtLfYc+QQkrTnKn3cLnAkEAk3ixXR0h4"
-             u"6Rj4j/9uSOfyyow\nqHQunlZ50hvNz8GAm4TU7v82m96449nFZtFObC69SLx/"
-             u"VsboTPsUh96idgRrBQJA\nQBfGeFt1VGAy+YTLYLzTfnGnoFQcv7+2i9ZXnn/"
-             u"Gs9N8M+/lekdBFYgzoKN0y4pG\n2+Q+Tlr2aNlAmrHtkT13+wJAJVgZATPI5X"
-             u"3UO0Wdf24f/w9+OY+QxKGl86tTQXzE\n4bwvYtUGufMIHiNeWP66i6fYCucXC"
-             u"MYtx6Xgu2hpdZZpFw==\n-----END RSA PRIVATE KEY-----\n"))
+    StringIO(
+        "-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKCAIEAl7sAF0x2O/Hw"
+        "LhG68b1uG8KHSOTqe3Cdlj5i/1RhO7E2BJ4B\n3jhKYDYtupRnMFbpu7fb21A"
+        "24w3Y3W5gXzywBxR6dP2HgiSDVecoDg2uSYPjnlDk\nHrRuviSBG3XpJ/awn1"
+        "DObxRIvJP4/sCqcMY8Ro/3qfmid5WmMpdCZ3EBeC0CAwEA\nAQKCAIBSGefUs"
+        "5UOnr190C49/GiGMN6PPP78SFWdJKjgzEHI0P0PxofwPLlSEj7w\nRLkJWR4k"
+        "azpWE7N/bNC6EK2pGueMN9Ag2GxdIRC5r1y8pdYbAkuFFwq9Tqa6j5B0\nGkk"
+        "wEhrcFNBGx8UfzHESXe/uE16F+e8l6xBMcXLMJVo9Xjui6QJBAL9MsJEx93iO"
+        "\nzwjoRpSNzWyZFhiHbcGJ0NahWzc3wASRU6L9M3JZ1VkabRuWwKNuEzEHNK8"
+        "cLbRl\nTyH0mceWXcsCQQDLDEuWcOeoDteEpNhVJFkXJJfwZ4Rlxu42MDsQQ/"
+        "paJCjt2ONU\nWBn/P6iYDTvxrt/8+CtLfYc+QQkrTnKn3cLnAkEAk3ixXR0h4"
+        "6Rj4j/9uSOfyyow\nqHQunlZ50hvNz8GAm4TU7v82m96449nFZtFObC69SLx/"
+        "VsboTPsUh96idgRrBQJA\nQBfGeFt1VGAy+YTLYLzTfnGnoFQcv7+2i9ZXnn/"
+        "Gs9N8M+/lekdBFYgzoKN0y4pG\n2+Q+Tlr2aNlAmrHtkT13+wJAJVgZATPI5X"
+        "3UO0Wdf24f/w9+OY+QxKGl86tTQXzE\n4bwvYtUGufMIHiNeWP66i6fYCucXC"
+        "MYtx6Xgu2hpdZZpFw==\n-----END RSA PRIVATE KEY-----\n"
+    )
+)
