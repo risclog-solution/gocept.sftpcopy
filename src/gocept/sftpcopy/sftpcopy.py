@@ -292,8 +292,15 @@ class SFTPCopy(object):
                     except self.RECONNECT_EXCEPTIONS as exc:
                         raise _ConnectionLost() from exc
                     if not data:
-                        if offset >= expected_size:
+                        if offset == expected_size:
                             return offset
+
+                        if offset > expected_size:
+                            raise RemoteFileChangedError(
+                                "Remote file {!r} grew while downloading; "
+                                "refusing to accept download".format(name)
+                            )
+
                         raise _ConnectionLost() from PrematureEOFError(
                             "Remote closed connection for {!r} after {} "
                             "of {} expected bytes".format(name, offset, expected_size)
@@ -311,6 +318,18 @@ class SFTPCopy(object):
                 attempts_used = self._reconnect_with_retry(
                     name, attempts_used, lost.__cause__
                 )
+            finally:
+                if remote is not None:
+                    try:
+                        remote.close()
+                    except (
+                        paramiko.SSHException,
+                        EOFError,
+                        OSError,
+                    ):
+                        # Best effort: Bei einer kaputten Verbindung ist es
+                        # völlig normal, dass auch close() fehlschlägt.
+                        pass
 
     def _copy_file(self, source, target):
         size = 0
