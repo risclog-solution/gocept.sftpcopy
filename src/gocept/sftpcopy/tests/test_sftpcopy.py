@@ -12,13 +12,21 @@ import unittest
 
 
 class DropSchedule:
-    """Shared, mutable state used by `DroppingFile`/`DroppingSFTP` to
-    deterministically simulate a lost SSH connection after a defined
-    number of bytes have been read from a remote file -- regardless of how
-    often the connection has already been re-established in the meantime.
+    """Shared, mutable state used by `DroppingFile`/`DroppingSFTP`/
+    `FlakySFTPCopy` to deterministically simulate a lost SSH connection --
+    while reading a remote file, while premature EOF is signalled, or
+    while reconnecting itself -- regardless of how often the connection
+    has already been re-established in the meantime.
     """
 
-    def __init__(self, drop_after_bytes=(), exception_factory=None, on_drop=None):
+    def __init__(
+        self,
+        drop_after_bytes=(),
+        exception_factory=None,
+        on_drop=None,
+        premature_eof_after_bytes=None,
+        reconnect_failures=0,
+    ):
         # Byte offsets (relative to the whole download) at which a
         # connection drop should be simulated. Consumed one at a time.
         self.pending = list(drop_after_bytes)
@@ -28,12 +36,20 @@ class DropSchedule:
             lambda: paramiko.SSHException("Server connection dropped")
         )
         self.on_drop = on_drop
+        # Number of bytes after which a single read() should return an
+        # empty result (simulated premature EOF) without actually having
+        # reached the end of the file. Triggers only once.
+        self.premature_eof_after_bytes = premature_eof_after_bytes
+        self._premature_eof_triggered = False
+        # Number of times `connect()`/reconnect should fail (raising a
+        # simulated connection error) before actually succeeding.
+        self.reconnect_failures = reconnect_failures
 
 
 class DroppingFile:
     """Wraps a real `paramiko.SFTPFile` opened for reading and raises a
-    simulated connection error once the configured number of bytes has
-    been read.
+    simulated connection error (or signals a premature EOF) once the
+    configured number of bytes has been read.
     """
 
     def __init__(self, real_file, schedule):
@@ -50,6 +66,13 @@ class DroppingFile:
             if schedule.on_drop:
                 schedule.on_drop()
             raise schedule.exception_factory()
+        if (
+            schedule.premature_eof_after_bytes is not None
+            and not schedule._premature_eof_triggered
+            and schedule.total_read >= schedule.premature_eof_after_bytes
+        ):
+            schedule._premature_eof_triggered = True
+            return b""
         data = self._real.read(size)
         schedule.total_read += len(data)
         return data
@@ -82,17 +105,29 @@ class FlakySFTPCopy(gocept.sftpcopy.sftpcopy.SFTPCopy):
     """`SFTPCopy` that wraps the real sftp client with a `DroppingSFTP`
     test double after every (re-)connect, so connection drops can be
     simulated deterministically without any real network interruption.
+    Can also simulate the reconnect itself failing a configurable number
+    of times before succeeding.
     """
 
     def __init__(self, *args, **kw):
         self.drop_schedule = kw.pop("drop_schedule")
         super().__init__(*args, **kw)
+        # Number of connect() calls that actually succeeded.
         self.connect_count = 0
+        # Number of connect() calls attempted, including failed ones.
+        self.connect_attempts = 0
 
     def connect(self):
+        self.connect_attempts += 1
+        schedule = self.drop_schedule
+        if self.connect_attempts > 1 and schedule.reconnect_failures > 0:
+            schedule.reconnect_failures -= 1
+            raise paramiko.SSHException(
+                "Server connection dropped (simulated reconnect failure)"
+            )
         super().connect()
         self.connect_count += 1
-        self.sftp = DroppingSFTP(self.sftp, self.drop_schedule)
+        self.sftp = DroppingSFTP(self.sftp, schedule)
 
 
 class EndToEndTest(unittest.TestCase):
@@ -291,4 +326,56 @@ class ReconnectResumeTest(unittest.TestCase):
         # no reconnect must have been attempted for a non-connection error
         self.assertEqual(1, cpy.connect_count)
         self.assertFalse(os.path.exists(self.downloaded_path()))
+        self.assertTrue(os.path.exists(self.remote_file))
+
+    def test_reconnect_itself_fails_once_then_succeeds(self):
+        schedule = DropSchedule(drop_after_bytes=[216], reconnect_failures=1)
+        cpy = self.make_copy(schedule, reconnect_attempts=3)
+        cpy.connect()
+        cpy.downloadNewFiles()
+        cpy.close()
+
+        # initial connect + 1 failed reconnect attempt (not counted as a
+        # successful connection) + 1 successful reconnect
+        self.assertEqual(2, cpy.connect_count)
+        self.assertEqual(3, cpy.connect_attempts)
+        self.assertEqual([216], schedule.seek_offsets)
+        self.assertEqual(self.CONTENTS, open(self.downloaded_path(), "rb").read())
+        self.assertFalse(os.path.exists(self.remote_file))
+
+    def test_all_reconnects_fail_raises_and_keeps_remote_file(self):
+        schedule = DropSchedule(drop_after_bytes=[216], reconnect_failures=99)
+        cpy = self.make_copy(schedule, reconnect_attempts=3)
+        cpy.connect()
+        cpy.downloadNewFiles()  # IOError/SSHException is caught & logged
+        cpy.close()
+
+        # only the initial connect ever succeeded, all reconnects failed
+        self.assertEqual(1, cpy.connect_count)
+        self.assertEqual(4, cpy.connect_attempts)  # initial + 3 failed
+        self.assertFalse(os.path.exists(self.downloaded_path()))
+        self.assertTrue(os.path.exists(self.tmp_path()))
+        self.assertTrue(os.path.exists(self.remote_file))
+
+    def test_premature_eof_is_not_accepted_as_successful_download(self):
+        schedule = DropSchedule(premature_eof_after_bytes=40)
+        cpy = self.make_copy(schedule)
+        cpy.connect()
+        cpy.downloadNewFiles()
+        cpy.close()
+
+        # initial connect + one reconnect triggered by the premature EOF
+        self.assertEqual(2, cpy.connect_count)
+        self.assertEqual(self.CONTENTS, open(self.downloaded_path(), "rb").read())
+        self.assertFalse(os.path.exists(self.remote_file))
+
+    def test_premature_eof_with_exhausted_reconnects_keeps_remote_file(self):
+        schedule = DropSchedule(premature_eof_after_bytes=40, reconnect_failures=99)
+        cpy = self.make_copy(schedule, reconnect_attempts=2)
+        cpy.connect()
+        cpy.downloadNewFiles()  # IOError is caught & logged internally
+        cpy.close()
+
+        self.assertFalse(os.path.exists(self.downloaded_path()))
+        self.assertTrue(os.path.exists(self.tmp_path()))
         self.assertTrue(os.path.exists(self.remote_file))

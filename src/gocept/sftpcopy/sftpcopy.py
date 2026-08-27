@@ -17,6 +17,21 @@ class RemoteFileChangedError(IOError):
     the download could be resumed."""
 
 
+class PrematureEOFError(IOError):
+    """Raised when the remote server closes a file transfer before the
+    expected number of bytes has been transmitted. This is treated like a
+    dropped connection and is eligible for reconnect/resume."""
+
+
+class _ConnectionLost(Exception):
+    """Internal sentinel used to unify the handling of a dropped
+    connection detected at any point while (re-)opening or reading a
+    remote file (stat/open/seek/read), so a single retry loop can cover
+    all of them without recursion. The original exception is available
+    via ``__cause__``.
+    """
+
+
 class SFTPCopy(object):
     # Exceptions that plausibly indicate a lost connection (as opposed to,
     # e.g., "file not found" or "permission denied") and therefore warrant
@@ -171,7 +186,9 @@ class SFTPCopy(object):
                 logging.error("Failed to download {!r} (IOError: {})".format(name, e))
             except self.RECONNECT_EXCEPTIONS as e:
                 # Surfaces once the reconnect attempts for this file have
-                # been exhausted; logged and skipped like any other
+                # been exhausted; not an IOError subclass by itself (e.g.
+                # paramiko.SSHException/EOFError), so it needs its own
+                # handler to be logged and skipped like any other
                 # per-file download failure.
                 logging.error(
                     "Failed to download {!r} ({}: {})".format(name, type(e).__name__, e)
@@ -181,65 +198,119 @@ class SFTPCopy(object):
         stat = self.sftp.stat(name)
         return stat.st_size, getattr(stat, "st_mtime", None)
 
-    def _download_file(self, name, local):
-        """Download `name` into the already opened local file `local`,
-        transparently reconnecting and resuming at the last successfully
-        written byte if the connection drops while reading.
-        """
-        remote_size, remote_mtime = self._stat_remote_file(name)
-        remote = self.sftp.file(name, "r")
-        offset = 0
-        attempt = 0
-        while True:
-            try:
-                while True:
-                    data = remote.read(int(self.buffer_size))
-                    if not data:
-                        return offset
-                    # Local write failures (e.g. disk full) are not
-                    # connection problems and must not trigger a reconnect.
-                    local.write(data)
-                    offset += len(data)
-            except self.RECONNECT_EXCEPTIONS:
-                if attempt >= self.reconnect_attempts:
-                    logging.error(
-                        "Unable to resume download of %r after %s "
-                        "reconnect attempts." % (name, self.reconnect_attempts)
-                    )
-                    raise
-                attempt += 1
-                logging.warning(
-                    "Connection dropped while downloading %r after %s "
-                    "bytes." % (name, offset)
-                )
-                logging.info(
-                    "Reconnecting (attempt {}/{}).".format(
-                        attempt, self.reconnect_attempts
-                    )
-                )
-                remote = self._resume_remote_file(
-                    name, offset, remote_size, remote_mtime
-                )
-
-    def _resume_remote_file(self, name, offset, remote_size, remote_mtime):
-        self._reconnect()
-        new_size, new_mtime = self._stat_remote_file(name)
+    def _check_remote_unchanged(
+        self, name, offset, size, mtime, expected_size, expected_mtime
+    ):
         if (
-            new_size != remote_size
-            or offset > new_size
+            size != expected_size
+            or offset > size
             or (
-                remote_mtime is not None
-                and new_mtime is not None
-                and new_mtime != remote_mtime
+                expected_mtime is not None
+                and mtime is not None
+                and mtime != expected_mtime
             )
         ):
             raise RemoteFileChangedError(
                 "Remote file %r changed while downloading; refusing to " "resume" % name
             )
-        remote = self.sftp.file(name, "r")
-        remote.seek(offset)
-        logging.info("Resuming download of {!r} at byte {}.".format(name, offset))
-        return remote
+
+    def _open_remote_file(self, name, offset, expected_size, expected_mtime):
+        """(Re-)open `name` for reading, positioned at `offset`.
+
+        Covers stat/open/seek, which -- just like read() -- can fail
+        because the connection was dropped. Any such failure is
+        translated into `_ConnectionLost` so a single retry loop in
+        `_download_file` can handle all of them uniformly. Non-connection
+        errors (file not found, permission denied, a changed remote file)
+        propagate directly and are not retried.
+        """
+        try:
+            size, mtime = self._stat_remote_file(name)
+            if expected_size is not None:
+                self._check_remote_unchanged(
+                    name, offset, size, mtime, expected_size, expected_mtime
+                )
+            remote = self.sftp.file(name, "r")
+            if offset:
+                remote.seek(offset)
+                logging.info(
+                    "Resuming download of {!r} at byte {}.".format(name, offset)
+                )
+        except self.RECONNECT_EXCEPTIONS as exc:
+            raise _ConnectionLost() from exc
+        return remote, size, mtime
+
+    def _reconnect_with_retry(self, name, attempts_used, last_exc):
+        """Try to re-establish the connection, consuming from the shared
+        `reconnect_attempts` budget. A failure of the reconnect attempt
+        itself (e.g. another dropped connection while re-authenticating)
+        is retried too, up to the same budget -- without recursion.
+        """
+        while True:
+            if attempts_used >= self.reconnect_attempts:
+                logging.error(
+                    "Unable to resume download of {!r} after {} reconnect "
+                    "attempts.".format(name, self.reconnect_attempts)
+                )
+                raise last_exc
+            attempts_used += 1
+            logging.info(
+                "Reconnecting (attempt {}/{}).".format(
+                    attempts_used, self.reconnect_attempts
+                )
+            )
+            try:
+                self._reconnect()
+            except self.RECONNECT_EXCEPTIONS as exc:
+                last_exc = exc
+                logging.warning("Reconnect failed while downloading {!r}.".format(name))
+                continue
+            return attempts_used
+
+    def _download_file(self, name, local):
+        """Download `name` into the already opened local file `local`,
+        transparently reconnecting and resuming at the last successfully
+        written byte if the connection drops -- while reading, while
+        re-opening/seeking the remote file, or while reconnecting itself.
+
+        A premature EOF (the remote side closing the stream before the
+        expected number of bytes was transmitted) is never accepted as a
+        successful download; it is treated like a dropped connection and
+        also triggers a reconnect/resume.
+        """
+        offset = 0
+        expected_size = expected_mtime = None
+        attempts_used = 0
+        while True:
+            try:
+                remote, expected_size, expected_mtime = self._open_remote_file(
+                    name, offset, expected_size, expected_mtime
+                )
+                while True:
+                    try:
+                        data = remote.read(int(self.buffer_size))
+                    except self.RECONNECT_EXCEPTIONS as exc:
+                        raise _ConnectionLost() from exc
+                    if not data:
+                        if offset >= expected_size:
+                            return offset
+                        raise _ConnectionLost() from PrematureEOFError(
+                            "Remote closed connection for {!r} after {} "
+                            "of {} expected bytes".format(name, offset, expected_size)
+                        )
+                    # Local write failures (e.g. disk full) must never be
+                    # treated as a dropped SFTP connection; they are not
+                    # caught here and propagate immediately.
+                    local.write(data)
+                    offset += len(data)
+            except _ConnectionLost as lost:
+                logging.warning(
+                    "Connection dropped while downloading {!r} after {} "
+                    "bytes.".format(name, offset)
+                )
+                attempts_used = self._reconnect_with_retry(
+                    name, attempts_used, lost.__cause__
+                )
 
     def _copy_file(self, source, target):
         size = 0
