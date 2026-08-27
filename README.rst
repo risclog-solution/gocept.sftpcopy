@@ -20,6 +20,8 @@ buildout integration). The configuration file has the following format::
     mode = upload # or download
     logfile = /path/to/logfile # defaults to stdout if not given
     buffer_size = 65536
+    reconnect_attempts = 3
+    reconnect_delay = 1
     skip_files =
         name_of_file_to_skip_1
         name_of_file_to_skip_2
@@ -39,6 +41,8 @@ The configdict uses the following keys instead:
 - logfile
 - buffer_size (default: 65536, i.e. 64 KiB)
 - keepalive_interval (default: 5 seconds)
+- reconnect_attempts (default: 3)
+- reconnect_delay (default: 1 second)
 - local_path
 - remote_path
 - hostname
@@ -57,6 +61,16 @@ upload or download.
 
 Files are copied in chunks of buffer_size to avoid loading big files into
 memory at once.
+
+If the SSH/SFTP connection drops while a file is being downloaded (e.g. with
+a ``paramiko.SSHException: Server connection dropped`` error), sftpcopy
+automatically reconnects, re-authenticates and resumes the download at the
+byte offset it had already written locally, instead of starting over. This
+is retried up to ``reconnect_attempts`` times (waiting ``reconnect_delay``
+seconds in between); if the remote file changed size (or, where reported by
+the server, modification time) in the meantime, resuming is refused and an
+error is raised instead of assembling a corrupted file. Uploads are not
+resumable.
 
 You can also use sftpcopy as a python object like this::
 

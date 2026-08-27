@@ -1,10 +1,10 @@
 Changelog
 =========
 
-2.2 (unreleased)
+3.0 (unreleased)
 ================
 
-- Nothing changed yet.
+- Automatically reconnect and resume interrupted SFTP downloads.
 
 
 2.1 (2025-07-16)
