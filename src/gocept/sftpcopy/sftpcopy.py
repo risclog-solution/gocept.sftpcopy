@@ -282,6 +282,8 @@ class SFTPCopy(object):
         expected_size = expected_mtime = None
         attempts_used = 0
         while True:
+            remote = None
+
             try:
                 remote, expected_size, expected_mtime = self._open_remote_file(
                     name, offset, expected_size, expected_mtime
