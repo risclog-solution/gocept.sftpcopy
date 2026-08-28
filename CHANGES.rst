@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0 (unreleased)
+3.0 (2026-08-28)
 ================
 
 - Automatically reconnect and resume interrupted SFTP downloads.
