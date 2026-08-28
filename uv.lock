@@ -355,6 +355,18 @@ wheels = [
 ]
 
 [[package]]
+name = "ecdsa"
+version = "0.19.2"
+source = { registry = "https://pypi.claimx.net/pypi/prod/" }
+dependencies = [
+    { name = "six" },
+]
+sdist = { url = "https://pypi.claimx.net/root/pypi/+f/626/35b0ac1ca2e02/ecdsa-0.19.2.tar.gz", hash = "sha256:62635b0ac1ca2e027f82122b5b81cb706edc38cd91c63dda28e4f3455a2bf930" }
+wheels = [
+    { url = "https://pypi.claimx.net/root/pypi/+f/840/f5dc5e375c68f/ecdsa-0.19.2-py2.py3-none-any.whl", hash = "sha256:840f5dc5e375c68f36c1a7a5b9caad28f95daa65185c9253c0c08dd952bb7399" },
+]
+
+[[package]]
 name = "gocept-filestore"
 version = "1.0"
 source = { registry = "https://pypi.claimx.net/pypi/prod/" }
@@ -373,9 +385,13 @@ name = "gocept-sftpcopy"
 version = "3.1.dev0"
 source = { editable = "." }
 dependencies = [
+    { name = "ecdsa" },
     { name = "gocept-filestore" },
+    { name = "importlib-metadata" },
     { name = "paramiko" },
+    { name = "pyasn1" },
     { name = "setuptools" },
+    { name = "zipp" },
 ]
 
 [package.dev-dependencies]
@@ -387,9 +403,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "ecdsa" },
     { name = "gocept-filestore" },
+    { name = "importlib-metadata" },
     { name = "paramiko" },
-    { name = "setuptools" },
+    { name = "pyasn1" },
+    { name = "setuptools", specifier = ">=77" },
+    { name = "zipp" },
 ]
 
 [package.metadata.requires-dev]
@@ -397,6 +417,18 @@ dev = [
     { name = "pytest", specifier = ">=7" },
     { name = "pytest-cov" },
     { name = "sftpserver" },
+]
+
+[[package]]
+name = "importlib-metadata"
+version = "9.0.0"
+source = { registry = "https://pypi.claimx.net/pypi/prod/" }
+dependencies = [
+    { name = "zipp" },
+]
+sdist = { url = "https://pypi.claimx.net/root/pypi/+f/a4f/57ab599e6a2e3/importlib_metadata-9.0.0.tar.gz", hash = "sha256:a4f57ab599e6a2e3016d7595cfd72eb4661a5106e787a95bcc90c7105b831efc" }
+wheels = [
+    { url = "https://pypi.claimx.net/root/pypi/+f/2d2/1d1cc5a017bd0/importlib_metadata-9.0.0-py3-none-any.whl", hash = "sha256:2d21d1cc5a017bd0559e36150c21c830ab1dc304dedd1b7ea85d20f45ef3edd7" },
 ]
 
 [[package]]
@@ -428,7 +460,7 @@ wheels = [
 
 [[package]]
 name = "paramiko"
-version = "5.0.0"
+version = "4.0.0"
 source = { registry = "https://pypi.claimx.net/pypi/prod/" }
 dependencies = [
     { name = "bcrypt" },
@@ -436,9 +468,9 @@ dependencies = [
     { name = "invoke" },
     { name = "pynacl" },
 ]
-sdist = { url = "https://pypi.claimx.net/root/pypi/+f/367/63b5b95c2a0dc/paramiko-5.0.0.tar.gz", hash = "sha256:36763b5b95c2a0dcfdf1abc48e48156ee425b21efe2f0e787c2dd5a95c0e5e79" }
+sdist = { url = "https://pypi.claimx.net/root/pypi/+f/6a2/5f07b380cc9c9/paramiko-4.0.0.tar.gz", hash = "sha256:6a25f07b380cc9c9a88d2b920ad37167ac4667f8d9886ccebd8f90f654b5d69f" }
 wheels = [
-    { url = "https://pypi.claimx.net/root/pypi/+f/b70/44611c30140d9/paramiko-5.0.0-py3-none-any.whl", hash = "sha256:b7044611c30140d9a75261653210e2002977b71a0497ff3ba0d98d7edbf62f7c" },
+    { url = "https://pypi.claimx.net/root/pypi/+f/0e2/0e00ac666503b/paramiko-4.0.0-py3-none-any.whl", hash = "sha256:0e20e00ac666503bf0b4eda3b6d833465a2b7aff2e2b3d79a8bba5ef144ee3b9" },
 ]
 
 [[package]]
@@ -448,6 +480,15 @@ source = { registry = "https://pypi.claimx.net/pypi/prod/" }
 sdist = { url = "https://pypi.claimx.net/root/pypi/+f/7dc/c130b76258d33/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3" }
 wheels = [
     { url = "https://pypi.claimx.net/root/pypi/+f/e92/0276dd6813095/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746" },
+]
+
+[[package]]
+name = "pyasn1"
+version = "0.6.4"
+source = { registry = "https://pypi.claimx.net/pypi/prod/" }
+sdist = { url = "https://pypi.claimx.net/root/pypi/+f/9c4/47d8431c947fe/pyasn1-0.6.4.tar.gz", hash = "sha256:9c447d8431c947fe4c8febc4ed9e760bc29011a5b01e5c74b67025bd9fb8ce81" }
+wheels = [
+    { url = "https://pypi.claimx.net/root/pypi/+f/ded/a9277cfd45408/pyasn1-0.6.4-py3-none-any.whl", hash = "sha256:deda9277cfd454080ec40b207fb6df82206a3a2688735233cdcd8d3d565f088b" },
 ]
 
 [[package]]
@@ -556,6 +597,15 @@ wheels = [
 ]
 
 [[package]]
+name = "six"
+version = "1.17.0"
+source = { registry = "https://pypi.claimx.net/pypi/prod/" }
+sdist = { url = "https://pypi.claimx.net/root/pypi/+f/ff7/0335d468e7eb6/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81" }
+wheels = [
+    { url = "https://pypi.claimx.net/root/pypi/+f/472/1f391ed90541f/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274" },
+]
+
+[[package]]
 name = "tomli"
 version = "2.4.1"
 source = { registry = "https://pypi.claimx.net/pypi/prod/" }
@@ -607,6 +657,15 @@ wheels = [
     { url = "https://pypi.claimx.net/root/pypi/+f/2c1/c351919aca028/tomli-2.4.1-cp314-cp314t-win_amd64.whl", hash = "sha256:2c1c351919aca02858f740c6d33adea0c5deea37f9ecca1cc1ef9e884a619d26" },
     { url = "https://pypi.claimx.net/root/pypi/+f/eab/21f45c7f66c13/tomli-2.4.1-cp314-cp314t-win_arm64.whl", hash = "sha256:eab21f45c7f66c13f2a9e0e1535309cee140182a9cdae1e041d02e47291e8396" },
     { url = "https://pypi.claimx.net/root/pypi/+f/0d8/5819802132122/tomli-2.4.1-py3-none-any.whl", hash = "sha256:0d85819802132122da43cb86656f8d1f8c6587d54ae7dcaf30e90533028b49fe" },
+]
+
+[[package]]
+name = "zipp"
+version = "4.1.0"
+source = { registry = "https://pypi.claimx.net/pypi/prod/" }
+sdist = { url = "https://pypi.claimx.net/root/pypi/+f/4cb/57381f544315d/zipp-4.1.0.tar.gz", hash = "sha256:4cb57381f544315db7688e976e922a2b18cdb513d21cc194eb42232ba2a3e602" }
+wheels = [
+    { url = "https://pypi.claimx.net/root/pypi/+f/25a/d4e16390cd314/zipp-4.1.0-py3-none-any.whl", hash = "sha256:25ad4e16390cd314347dd8f1de67a2ac538ae658ed4ab9db16029c07c188e97f" },
 ]
 
 [[package]]

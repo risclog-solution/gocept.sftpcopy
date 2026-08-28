@@ -35,6 +35,10 @@ dependencies = [
     "setuptools>=77",
     "gocept.filestore",
     "paramiko",
+    "ecdsa",
+    "pyasn1",
+    "zipp",
+    "importlib-metadata",
 ]
 
 [project.urls]
