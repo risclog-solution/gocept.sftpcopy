@@ -54,7 +54,9 @@ The configdict uses the following keys instead:
 
 key_filename takes precedence over password. If key_filename ends with ``dsa``,
 it's assumed to be a DSA key, else an RSA key. Note that the key file must not
-be password protected.
+be password protected. DSA keys are no longer supported by current paramiko
+releases; using a ``dsa`` key_filename raises a clear error instead of
+authenticating.
 
 ``skip_files`` is a list of filenames (local or remote), which are skipped during
 upload or download.

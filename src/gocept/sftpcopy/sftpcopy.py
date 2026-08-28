@@ -88,7 +88,14 @@ class SFTPCopy(object):
             if self.key_filename:
                 ext = self.key_filename[:-3]
                 if ext == "dsa":
-                    key_class = paramiko.DSSKey
+                    key_class = getattr(paramiko, "DSSKey", None)
+                    if key_class is None:
+                        raise ValueError(
+                            "DSA keys (key_filename ending in 'dsa') are no "
+                            "longer supported: this paramiko version removed "
+                            "DSSKey. Use an RSA (or other supported) key "
+                            "instead."
+                        )
                 else:
                     key_class = paramiko.RSAKey
                 connect_args["pkey"] = key_class.from_private_key_file(

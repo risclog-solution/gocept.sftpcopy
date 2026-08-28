@@ -4,7 +4,13 @@ Changelog
 3.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- Update to work with the latest paramiko/cryptography releases; replace
+  the test-only host/RSA key fixtures with keys these versions can still
+  parse.
+
+- Raise a clear error instead of an ``AttributeError`` when a DSA
+  ``key_filename`` is configured, since current paramiko releases no
+  longer support DSA keys (``paramiko.DSSKey`` was removed).
 
 
 3.0 (2026-08-28)
