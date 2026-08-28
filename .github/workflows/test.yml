@@ -1,0 +1,34 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 2 * * *'
+
+jobs:
+  test:
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_appenv.yml@master
+    with:
+      versions: >-
+        ["3.12",]
+
+  coverage:
+    needs: test
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/coverage.yml@master
+    with:
+      min_coverage: 85
+
+  pre-commit:
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/pre_commit.yml@master
+
+  publish-test-results:
+    needs: test
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/publish_test_results.yml@master
+
+  cleanup:
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/cleanup.yml@master

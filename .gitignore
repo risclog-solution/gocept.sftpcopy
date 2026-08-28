@@ -5,6 +5,7 @@
 .installed.cfg
 .pytest_cache
 .tox/
+.venv
 bin
 coverage-report
 coverage.xml

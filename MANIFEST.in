@@ -1,8 +1,17 @@
+include *.py
 include *.rst
+include *.toml
+include *.txt
+include *.yaml
 include .coveragerc
-include buildout.cfg
-include pytest.ini
+include .isort.cfg
 include tox.ini
-recursive-include src *.conf
-recursive-include src *.zcml
-exclude .pre-commit-config.yaml
+recursive-include docs *.py
+recursive-include docs *.txt
+recursive-include src *.csv
+recursive-include src *.mako
+recursive-include src *.py
+recursive-include src *.sql
+recursive-include src *.txt
+exclude pytest.ini
+exclude uv.lock

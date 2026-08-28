@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gocept.sftpcopy"
+version = "3.1.dev0"
+description = "Upload/download files via SFTP to a maildir structure"
+dynamic = ["readme"]
+license = { text = "ZPL-2.1" }
+authors = [
+    {name = "Christian Zagrodnick", email = "cz@flyingcircus.io"},
+    {name = "Sebastian Wehrmann", email = "sebastian@risclog.com"},
+]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Operating System :: POSIX",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: POSIX :: BSD",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Communications",
+    "Topic :: Internet",
+    "Topic :: Internet :: File Transfer Protocol (FTP)",
+]
+dependencies = [
+    "setuptools>=77",
+    "gocept.filestore",
+    "paramiko",
+]
+
+[project.urls]
+Homepage = "https://github.com/risclog/gocept.sftpcopy"
+
+[project.scripts]
+sftpcopy = "gocept.sftpcopy.sftpcopy:main"
+
+[dependency-groups]
+dev = [
+    "sftpserver",
+    "pytest>=7",
+    "pytest-cov",
+]
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst", "CHANGES.rst"]}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["gocept.*"]

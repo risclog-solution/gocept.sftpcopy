@@ -12,6 +12,11 @@ Changelog
   ``key_filename`` is configured, since current paramiko releases no
   longer support DSA keys (``paramiko.DSSKey`` was removed).
 
+- Migrate packaging from ``setup.py`` to ``pyproject.toml`` and switch
+  to `uv <https://docs.astral.sh/uv/>`_ for development; ``setup.py``
+  is now only a minimal shim. The ``gocept`` namespace package uses
+  PEP 420 implicit namespace packaging.
+
 
 3.0 (2026-08-28)
 ================
