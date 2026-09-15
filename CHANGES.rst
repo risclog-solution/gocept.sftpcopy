@@ -4,8 +4,8 @@ Changelog
 3.2 (unreleased)
 ================
 
-- Nothing changed yet.
-
+- deps: update dependencies
+  (https://redmine.risclog.de/issues/45071)
 
 3.1 (2026-09-15)
 ================
