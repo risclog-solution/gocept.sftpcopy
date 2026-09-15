@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.1 (unreleased)
+3.1 (2026-09-15)
 ================
 
 - Update to work with the latest paramiko/cryptography releases; replace
