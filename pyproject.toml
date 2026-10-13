@@ -32,7 +32,7 @@ classifiers = [
     "Topic :: Internet :: File Transfer Protocol (FTP)",
 ]
 dependencies = [
-    "setuptools==80.9.0", # pkg_resources is required for namespace for now
+    "setuptools==83.0.0", # pkg_resources is required for namespace for now
     "gocept.filestore",
     "paramiko",
     "ecdsa",
