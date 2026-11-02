@@ -13,6 +13,9 @@ Changelog
 - deps: update dependencies
   (https://redmine.risclog.de/issues/45609)
 
+- deps: update dependencies
+  (https://redmine.risclog.de/issues/46028)
+
 3.1 (2026-09-15)
 ================
 
